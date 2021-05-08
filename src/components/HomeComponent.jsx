@@ -1,9 +1,9 @@
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const Home = (props) => {
     return <>
         <h1>Home</h1>
-        <Link to='/topics'>All Topics</Link>    
+        <Link to='/topics'>All Topics</Link>
     </>
 };
 

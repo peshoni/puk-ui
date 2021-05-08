@@ -1,13 +1,17 @@
+import AllTopics from './AllTopicsComponent';
 import Header from './Header';
 import Home from './HomeComponent';
-import Login from './LoginComponent';
+import SignIn from './SignInComponent';
+import SignUp from './SignUpComponent';
 import Topic from './TopicComponent';
-import AllTopics from './AllTopicsComponent';
+
 
 export {
     Header,
     Home,
-    Login,
+    SignIn,
+    SignUp,
     Topic,
     AllTopics
-}
+};
+

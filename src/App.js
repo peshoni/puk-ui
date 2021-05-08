@@ -1,7 +1,7 @@
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import './App.css';
+import { AllTopics, Header, Home, SignIn, SignUp, Topic } from './components';
 
-import {AllTopics, Header, Home, Login, Topic} from './components';
 
 
 function App() {
@@ -10,10 +10,13 @@ function App() {
       <div className="App">
         <Header />
         <Switch>
-          <Route path='/' exact component={Home} />
+
+
+          <Route path='/' exact component={SignIn} />
+          <Route path='/signUp' component={SignUp} />
+          <Route path='/home' exact component={Home} />
           <Route path='/topics' exact component={AllTopics} />
           <Route path='/topic/:topicId' component={Topic} />
-          <Route path='/login' component={Login} />
         </Switch>
       </div>
     </BrowserRouter>
