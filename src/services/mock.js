@@ -21,6 +21,29 @@ const allTopics = [
             lastName: 'Ivanov'
         }
     }
+    ,
+    {
+        id: 3,
+        title: 'New Topic',
+        createdAt: new Date(),
+        modifiedAt: new Date(),
+        user: {
+            id: 1,
+            firstName: 'Ivan',
+            lastName: 'Ivanov'
+        }
+    },
+    {
+        id: 4,
+        title: 'New Topic',
+        createdAt: new Date(),
+        modifiedAt: new Date(),
+        user: {
+            id: 1,
+            firstName: 'Ivan',
+            lastName: 'Ivanov'
+        }
+    }
 ]
 
 export {

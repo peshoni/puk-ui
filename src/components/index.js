@@ -1,4 +1,5 @@
 import AllTopics from './AllTopicsComponent';
+import CreateTopic from './CreateTopicComponent';
 import Header from './Header';
 import Home from './HomeComponent';
 import SignIn from './SignInComponent';
@@ -12,6 +13,7 @@ export {
     SignIn,
     SignUp,
     Topic,
-    AllTopics
+    AllTopics,
+    CreateTopic
 };
 

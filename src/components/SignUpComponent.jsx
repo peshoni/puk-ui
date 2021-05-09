@@ -12,7 +12,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import React from 'react';
+import axios from 'axios';
+import { React, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import { useToasts } from 'react-toast-notifications';
+
 
 function Copyright() {
     return (
@@ -48,7 +52,67 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function SignUp() {
+
     const classes = useStyles();
+    const history = useHistory();
+    const { addToast } = useToasts();
+
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+
+
+        const inst = axios.create({
+            baseURL: 'http://localhost:8082',
+            auth: {
+                username: 'admin',
+                password: 'admin'
+            }
+        });
+
+        const payload = {
+            username: username,
+            password: password,
+            firstName: firstName,
+            lastName: lastName,
+        }
+
+        // create User
+        inst.post('/api/reg/', payload)
+            .then((response) => {
+                console.log(response);
+
+                addToast('Registration was successful', {
+                    appearance: 'success',
+                    autoDismiss: true,
+                });
+
+                const createdUser = response?.data.result;
+                const form = new FormData();
+                form.append('username', createdUser.username);
+                form.append('password', createdUser.password);
+
+
+
+                inst.post('/oauth/token?grant_type=password', form, { headers: { "Content-Type": "multipart/form-data" } })
+                    .then(function (response) {
+                        localStorage.setItem('access_token', response.data.access_token);
+                        localStorage.setItem('refresh_token', response.data.refresh_token);
+                        history.push('/home')
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
 
     return (
         <Container component="main" maxWidth="xs">
@@ -60,11 +124,11 @@ export default function SignUp() {
                 <Typography component="h1" variant="h5">
                     Sign up
         </Typography>
-                <form className={classes.form} noValidate>
+                <form className={classes.form} noValidate onSubmit={handleSubmit}>
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
                             <TextField
-                                autoComplete="fname"
+                                autoComplete="off"
                                 name="firstName"
                                 variant="outlined"
                                 required
@@ -72,6 +136,9 @@ export default function SignUp() {
                                 id="firstName"
                                 label="First Name"
                                 autoFocus
+
+                                value={firstName}
+                                onChange={event => (setFirstName(event.target.value))}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
@@ -82,7 +149,10 @@ export default function SignUp() {
                                 id="lastName"
                                 label="Last Name"
                                 name="lastName"
-                                autoComplete="lname"
+                                autoComplete="off"
+
+                                value={lastName}
+                                onChange={event => (setLastName(event.target.value))}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -90,10 +160,13 @@ export default function SignUp() {
                                 variant="outlined"
                                 required
                                 fullWidth
-                                id="email"
-                                label="Email Address"
-                                name="email"
-                                autoComplete="email"
+                                id="username"
+                                label="username"
+                                name="username"
+                                autoComplete="off"
+
+                                value={username}
+                                onChange={event => (setUsername(event.target.value))}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -105,14 +178,11 @@ export default function SignUp() {
                                 label="Password"
                                 type="password"
                                 id="password"
-                                autoComplete="current-password"
+                                autoComplete="off"
+
+                                value={password}
+                                onChange={event => (setPassword(event.target.value))}
                             />
-                        </Grid>
-                        <Grid item xs={12}>
-                            {/* <FormControlLabel
-                                control={<Checkbox value="allowExtraEmails" color="primary" />}
-                                label="I want to receive inspiration, marketing promotions and updates via email."
-                            /> */}
                         </Grid>
                     </Grid>
                     <Button

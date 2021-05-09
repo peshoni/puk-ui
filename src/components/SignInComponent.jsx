@@ -1,5 +1,6 @@
 
 //https://material-ui.com/getting-started/templates/
+
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
@@ -11,7 +12,10 @@ import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import React from 'react';
+import axios from 'axios';
+import { React, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+
 
 
 function Copyright() {
@@ -47,8 +51,41 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+
+
 const SignIn = (props) => {
     const classes = useStyles();
+    const history = useHistory();
+
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+
+        const inst = axios.create({
+            baseURL: 'http://localhost:8082',
+            auth: {
+                username: 'admin',
+                password: 'admin'
+            }
+        });
+
+
+        const form = new FormData();
+        form.append('username', username);
+        form.append('password', password);
+
+        inst.post('/oauth/token?grant_type=password', form, { headers: { "Content-Type": "multipart/form-data" } })
+            .then(function (response) {
+                localStorage.setItem('access_token', response.data.access_token);
+                localStorage.setItem('refresh_token', response.data.refresh_token);
+                history.push('/home')
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
 
     return (
         <Container component="main" maxWidth="xs">
@@ -59,18 +96,21 @@ const SignIn = (props) => {
                 </Avatar>
                 <Typography component="h1" variant="h5">
                     Sign in
-        </Typography>
-                <form className={classes.form} noValidate>
+               </Typography>
+                <form className={classes.form} noValidate onSubmit={handleSubmit}>
                     <TextField
                         variant="outlined"
                         margin="normal"
                         required
                         fullWidth
-                        id="email"
-                        label="Email Address"
-                        name="email"
-                        autoComplete="email"
+                        id="username"
+                        label="Username"
+                        name="username"
+                        autoComplete="username"
                         autoFocus
+
+                        value={username}
+                        onChange={event => (setUsername(event.target.value))}
                     />
                     <TextField
                         variant="outlined"
@@ -82,11 +122,11 @@ const SignIn = (props) => {
                         type="password"
                         id="password"
                         autoComplete="current-password"
+
+                        value={password}
+                        onChange={event => (setPassword(event.target.value))}
                     />
-                    {/* <FormControlLabel
-                        control={<Checkbox value="remember" color="primary" />}
-                        label="Remember me"
-                    /> */}
+
                     <Button
                         type="submit"
                         fullWidth
