@@ -98,11 +98,11 @@ export default function SignUp() {
                 form.append('password', createdUser.password);
 
 
-
                 inst.post('/oauth/token?grant_type=password', form, { headers: { "Content-Type": "multipart/form-data" } })
                     .then(function (response) {
                         localStorage.setItem('access_token', response.data.access_token);
                         localStorage.setItem('refresh_token', response.data.refresh_token);
+
                         history.push('/home')
                     })
                     .catch(function (error) {

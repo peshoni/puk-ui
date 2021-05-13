@@ -77,6 +77,7 @@
 // export default AllTopics;
 
 import Fab from '@material-ui/core/Fab';
+import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -87,10 +88,17 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import AddIcon from '@material-ui/icons/Add';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import ReplyAll from '@material-ui/icons/ReplyAll';
 import Moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
+import Tooltip from "react-simple-tooltip";
 import API from '../services/api';
+
+ 
+//const addActionRef = React.useRef();
 
 const columns = [
     { id: 'id', label: 'id', minWidth: 70 },
@@ -108,15 +116,18 @@ const columns = [
         sortable: false,
         width: 160,
     },
+    {
+        id: 'edit',
+        label: 'edit',
 
-    // { id: 'code', label: 'ISO\u00a0Code', minWidth: 100 },
-    // {
-    //     id: 'population',
-    //     label: 'Population',
-    //     minWidth: 170,
-    //     align: 'right',
-    //     format: (value) => value.toLocaleString('en-US'),
-    // },
+        // render: (rowData) =>
+        //     rowData && (
+        //         <IconButton
+        //             color="secondary">
+        //             EDIT
+        //         </IconButton>
+        //     )
+    }
 
 ];
 
@@ -132,15 +143,15 @@ const useStyles = makeStyles({
 });
 
 const AllTopics = (props) => {
+    const history = useHistory();
     Moment.locale('bg');
     const classes = useStyles();
 
     const [topics, setTopics] = useState([]);
+    
     const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
-
-    // const [pageChange, handleChangePage] = React.useState(0);
-    // const [rowChange, handleChangeRowsPerPage] = React.useState(0);
+    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [allItems, setAllItems] = React.useState(0);
 
     const handleChangePage = (event, newPage) => {
         console.log(event, newPage);
@@ -148,30 +159,51 @@ const AllTopics = (props) => {
     };
 
     const handleChangeRowsPerPage = (event) => {
-        console.log(+event.target.value);
         setRowsPerPage(+event.target.value);
         setPage(0);
     };
 
+    const onCellClick = (action, params) => {
+        console.log(action);
+        console.log(params);
+        switch (action) {
+            case 'show':
+                history.push(`/topic/${params.id}`);
+            return;
+            case 'edit':
+                console.log(' EDIT ');
+            break;
+            case 'delete':
+                console.log(' DELETE ');
+            break;
+        
+            default:
+                break;
+        }
+      
+    }
+   
 
     useEffect(() => {
-        API.get('/topics')
+        API.get(`/topics/${page}/${rowsPerPage}/`)
             .then(res => {
-
-
-                res.data.forEach(element => {
+                console.log(res);
+                setAllItems(res.data.count);
+                res.data.result.forEach(element => {
                     let u = element.user;
                     element.fullName = u.firstName + ' ' + u.lastName + ' (' + u.role + ')';
                     element.createdAt = Moment(element.createdAt).format('DD.MM.YYYY - HH:mm:ss').toString();
                     element.modifiedAt = Moment(element.modifiedAt).format('DD.MM.YYYY - HH:mm:ss').toString();
                 });
-
-                setTopics(res.data);
-
+                setTopics(res.data.result);
             })
             .catch(err => console.log(err))
-    }, []);
+    }, [page, rowsPerPage]);
 
+
+    const [open, setOpen] = React.useState(false);
+
+    
     return (
 
         <Paper className={classes.root}>
@@ -179,14 +211,13 @@ const AllTopics = (props) => {
                 <Table stickyHeader aria-label="sticky table">
                     <TableHead>
                         <TableRow>
-                            <TableCell align="center" colSpan={4}>
+                            <TableCell align="center" colSpan={5}>
                                 all topics
-
-                                            
+                               
                             </TableCell>
                             <TableCell align="right"> <Fab size="small" color="secondary" aria-label="add" to='/addtopic' component={Link} >
-                                    <AddIcon />
-                                </Fab></TableCell>
+                                <AddIcon />
+                            </Fab></TableCell>
                         </TableRow>
                         <TableRow>
                             {columns.map((column) => (
@@ -201,27 +232,56 @@ const AllTopics = (props) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {topics.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                        {topics.map((row) => {
                             return (
                                 <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
                                     {columns.map((column) => {
                                         const value = row[column.id];
-                                        return (
-                                            <TableCell key={column.id} align={column.align}>
-                                                {column.format && typeof value === 'number' ? column.format(value) : value}
-                                            </TableCell>
-                                        );
+
+                                        if (column.id === 'edit') {
+                                            console.log('EHAAAA')
+                                            return ( 
+                                                <TableCell key={row.id} align={column.align} style={{ marginRight: 15 }}>
+                                                    <Tooltip title="comments" content="comments"  style={{zIndex:10000}}> 
+                                                        <IconButton aria-label="expand row" size="small" onClick={()=>onCellClick('show',row)}>
+                                                        <ReplyAll /> 
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                    <Tooltip title="edit" content="edit"  style={{zIndex:10000}}> 
+                                                        <IconButton aria-label="expand row" size="small" onClick={()=>onCellClick('edit',row)}>                                    
+                                                            < EditIcon />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                    <Tooltip title="delete" content="delete"  style={{zIndex:10000}}> 
+                                                        <IconButton aria-label="expand row" size="small" onClick={()=>onCellClick('delete',row)}>
+                                                        <DeleteIcon /> 
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                </TableCell>
+                                            )
+                                        } else {
+                                            return (
+                                                <TableCell key={column.id} align={column.align}>
+                                                    {column.format && typeof value === 'number' ? column.format(value) : value}
+                                                </TableCell>
+                                            )
+                                        }
                                     })}
                                 </TableRow>
                             );
                         })}
+
+                        {/* <TableCell key={column.id} align={column.align}>
+                            brada
+                                            </TableCell> */}
                     </TableBody>
                 </Table>
             </TableContainer>
             <TablePagination
-                rowsPerPageOptions={[2, 10]}
+                rowsPerPageOptions={[5, 10]}
                 component="div"
-                count={topics.length}
+                // count={topics.length}
+                count={allItems}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onChangePage={handleChangePage}

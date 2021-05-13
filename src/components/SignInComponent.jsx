@@ -17,7 +17,6 @@ import { React, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 
-
 function Copyright() {
     return (
         <Typography variant="body2" color="textSecondary" align="center">
@@ -80,11 +79,14 @@ const SignIn = (props) => {
             .then(function (response) {
                 localStorage.setItem('access_token', response.data.access_token);
                 localStorage.setItem('refresh_token', response.data.refresh_token);
+                localStorage.setItem('username', username);
                 history.push('/home')
             })
             .catch(function (error) {
                 console.log(error);
             });
+
+
     }
 
     return (
