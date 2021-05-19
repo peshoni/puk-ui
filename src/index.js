@@ -4,12 +4,12 @@ import { ToastProvider } from 'react-toast-notifications';
 import App from './App';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
+
+
 ReactDOM.render(
   <ToastProvider>
-    {/* <React.StrictMode> */}
-
-    <App />
-
+    {/* <React.StrictMode> */} 
+    <App /> 
     {/* </React.StrictMode> */}
   </ToastProvider>,
   document.getElementById('root')

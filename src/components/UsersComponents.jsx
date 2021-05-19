@@ -1,4 +1,3 @@
-import Fab from '@material-ui/core/Fab';
 import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
@@ -9,47 +8,39 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import ReplyAll from '@material-ui/icons/ReplyAll';
 import Moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import Tooltip from "react-simple-tooltip";
 import API from '../services/api';
 
- 
 //const addActionRef = React.useRef();
 
 const columns = [
     { id: 'id', label: 'id', minWidth: 70 },
-    { id: 'title', label: 'Title', width: 130 },
-    {
-        id: 'createdAt',
-        label: 'Created At',
-        width: 200,
-    },
-    { id: 'modifiedAt', label: 'Modified At', width: 200 },
-    {
-        id: 'fullName',
-        label: 'User',
-        description: 'This column has a value getter and is not sortable.',
-        sortable: false,
-        width: 160,
-    },
-    {
-        id: 'edit',
-        label: 'edit',
+    // { id: 'title', label: 'Title', width: 130 },
+    // {
+    //     id: 'createdAt',
+    //     label: 'Created At',
+    //     width: 200,
+    // },
+    // { id: 'modifiedAt', label: 'Modified At', width: 200 },
+    // {
+    //     id: 'fullName',
+    //     label: 'User',
+    //     description: 'This column has a value getter and is not sortable.',
+    //     sortable: false,
+    //     width: 160,
+    // },
+    // {
+    //     id: 'edit',
+    //     label: 'edit',
 
-        // render: (rowData) =>
-        //     rowData && (
-        //         <IconButton
-        //             color="secondary">
-        //             EDIT
-        //         </IconButton>
-        //     )
-    }
+      
+    // }
 
 ];
 
@@ -64,12 +55,13 @@ const useStyles = makeStyles({
     },
 });
 
-const AllTopics = (props) => {
+
+const AllUsers = (props) => {
     const history = useHistory();
     Moment.locale('bg');
     const classes = useStyles();
 
-    const [topics, setTopics] = useState([]);
+      const [users, setUsers] = useState([]);
     
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -107,17 +99,18 @@ const AllTopics = (props) => {
    
 
     useEffect(() => {
-        API.get(`/topics/${page}/${rowsPerPage}/`)
+        console.log('oooo')
+        API.get(`/users`)
             .then(res => {
                 console.log(res);
                 setAllItems(res.data.count);
-                res.data.result.forEach(element => {
-                    let u = element.user;
-                    element.fullName = u.firstName + ' ' + u.lastName + ' (' + u.role + ')';
-                    element.createdAt = Moment(element.createdAt).format('DD.MM.YYYY - HH:mm:ss').toString();
-                    element.modifiedAt = Moment(element.modifiedAt).format('DD.MM.YYYY - HH:mm:ss').toString();
-                });
-                setTopics(res.data.result);
+                // res.data.result.forEach(element => {
+                //     let u = element.user;
+                //     element.fullName = u.firstName + ' ' + u.lastName + ' (' + u.role + ')';
+                //     element.createdAt = Moment(element.createdAt).format('DD.MM.YYYY - HH:mm:ss').toString();
+                //     element.modifiedAt = Moment(element.modifiedAt).format('DD.MM.YYYY - HH:mm:ss').toString();
+                // });
+                 setUsers(res.data );
             })
             .catch(err => console.log(err))
     }, [page, rowsPerPage]);
@@ -130,12 +123,12 @@ const AllTopics = (props) => {
                     <TableHead>
                         <TableRow>
                             <TableCell align="center" colSpan={5}>
-                                all topics
+                                all Users
                                
                             </TableCell>
-                            <TableCell align="right"> <Fab size="small" color="secondary" aria-label="add" to='/addtopic' component={Link} >
+                            {/* <TableCell align="right"> <Fab size="small" color="secondary" aria-label="add" to='/addUser' component={Link} >
                                 <AddIcon />
-                            </Fab></TableCell>
+                            </Fab></TableCell> */}
                         </TableRow>
                         <TableRow>
                             {columns.map((column) => (
@@ -150,7 +143,7 @@ const AllTopics = (props) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {topics.map((row) => {
+                        {users.map((row) => {
                             return (
                                 <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
                                     {columns.map((column) => {
@@ -209,4 +202,4 @@ const AllTopics = (props) => {
     );
 }
 
-export default AllTopics;
+export default AllUsers;

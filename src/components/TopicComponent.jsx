@@ -153,7 +153,7 @@ const Topic = (props) => {
                             <TableCell align="center" colSpan={5}>
                                 {topic?.title}
                             </TableCell>
-                            <TableCell align="right"> <Fab size="small" color="secondary" aria-label="add" to='/addtopic' component={Link} >
+                            <TableCell align="right"> <Fab size="small" color="secondary" aria-label="add" to='/addreply' component={Link} >
                                 <AddIcon />
                             </Fab></TableCell>
                         </TableRow>
