@@ -10,7 +10,6 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import AddIcon from '@material-ui/icons/Add';
-import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import ReplyAll from '@material-ui/icons/ReplyAll';
 import Moment from 'moment';
@@ -33,24 +32,15 @@ const columns = [
     { id: 'modifiedAt', label: 'Modified At', width: 200 },
     {
         id: 'fullName',
-        label: 'User',
+        label: 'created by',
         description: 'This column has a value getter and is not sortable.',
         sortable: false,
         width: 160,
     },
     {
         id: 'edit',
-        label: 'edit',
-
-        // render: (rowData) =>
-        //     rowData && (
-        //         <IconButton
-        //             color="secondary">
-        //             EDIT
-        //         </IconButton>
-        //     )
+        label: 'edit', 
     }
-
 ];
 
 
@@ -69,11 +59,11 @@ const AllTopics = (props) => {
     Moment.locale('bg');
     const classes = useStyles();
 
-    const [topics, setTopics] = useState([]);
-    
+    const [topics, setTopics] = useState([]);    
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [allItems, setAllItems] = React.useState(0);
+    const [editorId, setEditorId] = React.useState(0);
 
     const handleChangePage = (event, newPage) => {
         console.log(event, newPage);
@@ -111,6 +101,7 @@ const AllTopics = (props) => {
             .then(res => {
                 console.log(res);
                 setAllItems(res.data.count);
+                setEditorId(res.data.editorId);
                 res.data.result.forEach(element => {
                     let u = element.user;
                     element.fullName = u.firstName + ' ' + u.lastName + ' (' + u.role + ')';
@@ -157,26 +148,38 @@ const AllTopics = (props) => {
                                         const value = row[column.id];
 
                                         if (column.id === 'edit') {
-                                            console.log('EHAAAA')
-                                            return ( 
-                                                <TableCell key={row.id} align={column.align} style={{ marginRight: 15 }}>
+                                            console.log(row.user.id);
+                                            console.log(editorId);
+                                             if (row.user.id === editorId) {
+                                                 return ( 
+                                                <TableCell key={row.id} align={column.align} style={{ marginRight: 15 }}> 
                                                     <Tooltip title="comments" content="comments"  style={{zIndex:10000}}> 
                                                         <IconButton aria-label="expand row" size="small" onClick={()=>onCellClick('show',row)}>
                                                         <ReplyAll /> 
                                                         </IconButton>
-                                                    </Tooltip>
-                                                    <Tooltip title="edit" content="edit"  style={{zIndex:10000}}> 
-                                                        <IconButton aria-label="expand row" size="small" onClick={()=>onCellClick('edit',row)}>                                    
+                                                    </Tooltip> 
+                                                    <Tooltip  title="edit" content="edit"  style={{zIndex:10000}}> 
+                                                        <IconButton aria-label="expand row" size="small"
+                                                            disabled ={ row.user.id !== editorId}
+                                                            onClick={() => onCellClick('edit', row)}>
                                                             < EditIcon />
                                                         </IconButton>
-                                                    </Tooltip>
-                                                    <Tooltip title="delete" content="delete"  style={{zIndex:10000}}> 
-                                                        <IconButton aria-label="expand row" size="small" onClick={()=>onCellClick('delete',row)}>
-                                                        <DeleteIcon /> 
-                                                        </IconButton>
-                                                    </Tooltip>
+                                                    </Tooltip> 
                                                 </TableCell>
                                             )
+                                              } else {
+                                                 return ( 
+                                                <TableCell key={row.id} align={column.align} style={{ marginRight: 15 }}>
+                                                    
+                                                    <Tooltip title="comments" content="comments"  style={{zIndex:10000}}> 
+                                                        <IconButton aria-label="expand row" size="small" onClick={()=>onCellClick('show',row)}>
+                                                        <ReplyAll /> 
+                                                        </IconButton>
+                                                    </Tooltip>  
+                                                </TableCell>
+                                            )
+                                             }
+                                            
                                         } else {
                                             return (
                                                 <TableCell key={column.id} align={column.align}>
@@ -197,8 +200,7 @@ const AllTopics = (props) => {
             </TableContainer>
             <TablePagination
                 rowsPerPageOptions={[5, 10]}
-                component="div"
-                // count={topics.length}
+                component="div" 
                 count={allItems}
                 rowsPerPage={rowsPerPage}
                 page={page}

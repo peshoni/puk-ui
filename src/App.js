@@ -7,20 +7,17 @@ import CreateReply from './components/CreateReplyComponent';
 import AllUsers from './components/UsersComponents';
  
 
-let first = {
-  name: 'dharmik',
-  age: '21'
-}
-export { first };
+// let first = {
+//   name: 'dharmik',
+//   age: '21'
+// }
+// export { first };
+ 
 
-function App() {
-
-
+function App() { 
   // const [userId, setUserId] = useState();
-
-  return (
-
-    // <ToastProvider>
+ 
+  return ( 
     <BrowserRouter>
       <div className="App">
         <Header />
@@ -37,9 +34,7 @@ function App() {
           
         </Switch>
       </div>
-    </BrowserRouter>
-    //  </ToastProvider>
-
+    </BrowserRouter> 
   );
 }
 

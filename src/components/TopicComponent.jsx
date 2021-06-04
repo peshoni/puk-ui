@@ -14,7 +14,6 @@ import TableRow from '@material-ui/core/TableRow';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
-import Reply from '@material-ui/icons/Reply';
 import Moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
@@ -34,7 +33,7 @@ const columns = [
     { id: 'modifiedAt', label: 'Modified At', width: 100 },
     {
         id: 'fullName',
-        label: 'User',
+        label: 'modified by',
         description: 'This column has a value getter and is not sortable.',
         sortable: false,
         width: 150,
@@ -73,17 +72,17 @@ const Topic = (props) => {
 
 
 
-    const loadTopic = (id, page, litit) => {
-        console.log(id, page, litit);
+    const loadTopic = (id, page, limit) => {
+        console.log(id, page, limit);
     }
     useEffect(() => {
         API.get(`/reply/topicId/${topicId}/${page}/${rowsPerPage}/`)
-            .then(res => {
-
-                let top = res.data.result;
+            .then(response => {
+console.log(response)
+                let top = response.data.result;
                 console.log(top.repliesPage);
 
-                setAllItems(res.data.count);
+                setAllItems(response.data.count);
 
                 top.repliesPage.forEach(element => {
                     let u = element.user;
@@ -186,11 +185,11 @@ const Topic = (props) => {
 
                                             return (
                                                 <TableCell key={row.id} align={column.align} style={{ marginRight: 15 }}>
-                                                    <Tooltip title="reply" content="reply" style={{ zIndex: 10000 }}>
+                                                    {/* <Tooltip title="reply" content="reply" style={{ zIndex: 10000 }}>
                                                         <IconButton aria-label="expand row" size="small" onClick={() => onCellClick('show', row)}>
                                                             <Reply />
                                                         </IconButton>
-                                                    </Tooltip>
+                                                    </Tooltip> */}
                                                     <Tooltip title="edit" content="edit" style={{ zIndex: 10000 }}>
                                                         <IconButton disabled={canEditThis(row.user.id)} aria-label="expand row" size="small" onClick={() => onCellClick('edit', row)}>
                                                             < EditIcon />

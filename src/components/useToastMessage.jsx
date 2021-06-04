@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-undef */
 import { useToasts } from 'react-toast-notifications'
 //https://jossmac.github.io/react-toast-notifications/
 export const ToastDemo = ({ content }) => {

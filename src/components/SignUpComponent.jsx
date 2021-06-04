@@ -86,17 +86,25 @@ export default function SignUp() {
         inst.post('/api/reg/', payload)
             .then((response) => {
                 console.log(response);
-
-                addToast('Registration was successful', {
+                let message  = response.data.message;
+                if (message.includes('exist')) {
+                      addToast(message, {
+                    appearance: 'error',
+                    autoDismiss: true,
+                      });
+                    setUsername('');
+                    return;
+                } else {
+                      addToast('Registration was successful', {
                     appearance: 'success',
                     autoDismiss: true,
                 });
+                }
 
                 const createdUser = response?.data.result;
                 const form = new FormData();
                 form.append('username', createdUser.username);
-                form.append('password', createdUser.password);
-
+                form.append('password', createdUser.password); 
 
                 inst.post('/oauth/token?grant_type=password', form, { headers: { "Content-Type": "multipart/form-data" } })
                     .then(function (response) {

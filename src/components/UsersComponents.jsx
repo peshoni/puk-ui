@@ -10,12 +10,12 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
-import ReplyAll from '@material-ui/icons/ReplyAll';
 import Moment from 'moment';
-import React, { useEffect, useState } from 'react';
+import { default as React, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import Tooltip from "react-simple-tooltip";
 import API from '../services/api';
+
 
 //const addActionRef = React.useRef();
 
@@ -27,21 +27,54 @@ const columns = [
     //     label: 'Created At',
     //     width: 200,
     // },
-    // { id: 'modifiedAt', label: 'Modified At', width: 200 },
-    // {
-    //     id: 'fullName',
-    //     label: 'User',
-    //     description: 'This column has a value getter and is not sortable.',
-    //     sortable: false,
-    //     width: 160,
-    // },
-    // {
-    //     id: 'edit',
-    //     label: 'edit',
-
-      
-    // }
-
+      {
+        id: 'createdAt',
+        label: 'created at',
+        description: ' ',
+        sortable: false,
+        width: 160,
+    },
+    {
+        id: 'modifiedAt',
+        label: 'modified at',
+        description: ' ',
+        sortable: false,
+        width: 160,
+    },
+      {
+        id: 'role',
+        label: 'role',
+        description: ' ',
+        sortable: false,
+        width: 160,
+    },
+        {
+        id: 'username',
+        label: 'username',
+        description: ' ',
+        sortable: false,
+        width: 160,
+    },
+         
+              {
+        id: 'firstName',
+        label: 'first name',
+        description: ' ',
+        sortable: false,
+        width: 160,
+    },
+                  {
+        id: 'lastName',
+        label: 'last name',
+        description: ' ',
+        sortable: false,
+        width: 160,
+    }, 
+    {
+        id: 'edit',
+        label: 'edit',
+ 
+    }
 ];
 
 
@@ -61,7 +94,7 @@ const AllUsers = (props) => {
     Moment.locale('bg');
     const classes = useStyles();
 
-      const [users, setUsers] = useState([]);
+    const [users, setUsers] = useState([]);
     
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -81,14 +114,12 @@ const AllUsers = (props) => {
         console.log(action);
         console.log(params);
         switch (action) {
-            case 'show':
-                history.push(`/topic/${params.id}`);
-            return;
+          
             case 'edit':
-                console.log(' EDIT ');
+               alert(' EDIT - Not implemented ');
             break;
             case 'delete':
-                console.log(' DELETE ');
+                alert(' DELETE - Not implemented ');  
             break;
         
             default:
@@ -104,13 +135,15 @@ const AllUsers = (props) => {
             .then(res => {
                 console.log(res);
                 setAllItems(res.data.count);
-                // res.data.result.forEach(element => {
-                //     let u = element.user;
-                //     element.fullName = u.firstName + ' ' + u.lastName + ' (' + u.role + ')';
-                //     element.createdAt = Moment(element.createdAt).format('DD.MM.YYYY - HH:mm:ss').toString();
-                //     element.modifiedAt = Moment(element.modifiedAt).format('DD.MM.YYYY - HH:mm:ss').toString();
-                // });
-                 setUsers(res.data );
+                res.data.result.forEach(element => {
+                    // let u = element.user;
+                    // element.fullName = u.firstName + ' ' + u.lastName + ' (' + u.role + ')';
+                    console.log(element );
+                    
+                      element.createdAt = Moment(element.createdAt).format('DD.MM.YYYY - HH:mm:ss').toString();
+                      element.modifiedAt = Moment(element.modifiedAt).format('DD.MM.YYYY - HH:mm:ss').toString();
+                });
+                 setUsers(res.data.result );
             })
             .catch(err => console.log(err))
     }, [page, rowsPerPage]);
@@ -147,25 +180,18 @@ const AllUsers = (props) => {
                             return (
                                 <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
                                     {columns.map((column) => {
-                                        const value = row[column.id];
-
-                                        if (column.id === 'edit') {
-                                            console.log('EHAAAA')
-                                            return ( 
-                                                <TableCell key={row.id} align={column.align} style={{ marginRight: 15 }}>
-                                                    <Tooltip title="comments" content="comments"  style={{zIndex:10000}}> 
-                                                        <IconButton aria-label="expand row" size="small" onClick={()=>onCellClick('show',row)}>
-                                                        <ReplyAll /> 
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                    <Tooltip title="edit" content="edit"  style={{zIndex:10000}}> 
-                                                        <IconButton aria-label="expand row" size="small" onClick={()=>onCellClick('edit',row)}>                                    
+                                        const value = row[column.id]; 
+                                        if (column.id === 'edit') { 
+                                            return (
+                                                <TableCell key={row.id} align={column.align} style={{ marginRight: 15 }}> 
+                                                    <Tooltip title="edit" content="edit" style={{ zIndex: 10000 }}>
+                                                        <IconButton aria-label="expand row" size="small" onClick={() => onCellClick('edit', row)}>
                                                             < EditIcon />
                                                         </IconButton>
                                                     </Tooltip>
-                                                    <Tooltip title="delete" content="delete"  style={{zIndex:10000}}> 
-                                                        <IconButton aria-label="expand row" size="small" onClick={()=>onCellClick('delete',row)}>
-                                                        <DeleteIcon /> 
+                                                    <Tooltip title="delete" content="delete" style={{ zIndex: 10000 }}>
+                                                        <IconButton aria-label="expand row" size="small" onClick={() => onCellClick('delete', row)}>
+                                                            <DeleteIcon />
                                                         </IconButton>
                                                     </Tooltip>
                                                 </TableCell>
@@ -182,16 +208,13 @@ const AllUsers = (props) => {
                             );
                         })}
 
-                        {/* <TableCell key={column.id} align={column.align}>
-                            brada
-                                            </TableCell> */}
+                     
                     </TableBody>
                 </Table>
             </TableContainer>
             <TablePagination
                 rowsPerPageOptions={[5, 10]}
-                component="div"
-                // count={topics.length}
+                component="div" 
                 count={allItems}
                 rowsPerPage={rowsPerPage}
                 page={page}
