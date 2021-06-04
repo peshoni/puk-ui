@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Header = (props) => {
-
+console.log(props)
   const classes = useStyles();
 
   return <AppBar position="static">
@@ -27,7 +27,9 @@ const Header = (props) => {
       <Typography variant="h6" className={classes.title}>
         <LinkUI to='/home' color="inherit" component={Link}>Home</LinkUI>
       </Typography>
+
       <Button color="inherit" to='/' component={Link}>Sign in</Button>
+
     </Toolbar>
   </AppBar>
 }
