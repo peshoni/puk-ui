@@ -6,6 +6,15 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 In the project directory, you can run:
 
+### `docker-compose up`
+Starts docker container with app available on port 3001
+
+
+
+
+
+
+
 ### `npm start`
 
 Runs the app in the development mode.\
