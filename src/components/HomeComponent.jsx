@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import API from '../services/api';
 
 
@@ -18,9 +17,9 @@ const Home = (props) => {
         })
 
     return <>
-        <h1>Home</h1>
-        <Link to='/topics'>All Topics</Link>
-        <Link to='/users'>All Users</Link>
+        <h1>Welcome</h1>
+        {/* <Link to='/topics'>All Topics</Link>
+        <Link to='/users'>All Users</Link> */}
     </>
 };
 

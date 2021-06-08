@@ -14,10 +14,11 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import Moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import Tooltip from 'react-simple-tooltip';
 import API from '../services/api';
 import User from '../services/user';
+import DataDialog from './DataDialog';
 
 const columns = [
   { id: 'id', label: 'id', minWidth: 70 },
@@ -62,15 +63,17 @@ const Topic = (props) => {
 
   const [loading, setLoading] = useState(true);
 
-  let topicId = +props.match.params.topicId;
+  //const topicId = +props.match.params.topicId;
+  const [topicId, setTopicId] = useState(+props.match.params.topicId);
 
   const classes = useStyles();
   const history = useHistory();
 
-  const loadTopic = (id, page, limit) => {
-    console.log(id, page, limit);
-  };
   useEffect(() => {
+    loadTopic(topicId, page, rowsPerPage);
+  }, []);
+
+  const loadTopic = (id, page, limit) => {
     API.get(`/reply/topicId/${topicId}/${page}/${rowsPerPage}/`)
       .then((response) => {
         console.log(response);
@@ -99,19 +102,23 @@ const Topic = (props) => {
       .catch((err) => {
         console.log(err);
       });
-  }, [page, topicId, rowsPerPage]);
-
-  loadTopic(1, 1, 1);
-
-  const handleChangePage = (event, newPage) => {
-    console.log(event, newPage);
+  };
+ 
+  const handleChangePage = (event, newPage) => { 
+    // setTimeout(
+    //     () =>  setPage(newPage),
+    //     1500
+    // );
     setPage(newPage);
+    console.log(newPage, page);
+    loadTopic(topicId, newPage, rowsPerPage);
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
+//   const handleChangeRowsPerPage = (event) => {
+//     setRowsPerPage(+event.target.value);
+//     setPage(0);
+//     loadTopic(topicId, page, rowsPerPage);
+//   };
 
   const onCellClick = (action, params) => {
     console.log(action);
@@ -132,12 +139,45 @@ const Topic = (props) => {
     }
   };
   const canEditThis = (a) => {
-    console.log('current user: ' + userId);
-    console.log('reply by user: ' + a);
+    // console.log('current user: ' + userId);
+    // console.log('reply by user: ' + a);
   };
-  //  console.log(repliesPage);
 
-  // return <>{topic?.title}</>
+  // DIALOG
+  const [dialogIsOpen, setDialogIsOpen] = React.useState({
+    isOpen: false,
+  });
+  const addReply = () => {
+    let data = { isOpen: true, label: 'Add topic' };
+    openDialog(data);
+  };
+
+  const openDialog = (params) => setDialogIsOpen(params);
+
+  const closeDialog = (props) => {
+    console.log(props);
+    if (props?.length > 0) {
+      const payload = {
+        userId: 1, // ????? who is this
+        topicId: topicId, /// topic
+        text: props,
+      };
+
+      console.log(payload);
+
+      API.post('/reply', payload)
+        .then((response) => {
+          loadTopic(topicId, page, rowsPerPage);
+          //history.push('/topics');
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+
+    setDialogIsOpen({ isOpen: false });
+  };
+
   return (
     <Paper className={classes.root}>
       <TableContainer className={classes.container}>
@@ -145,7 +185,7 @@ const Topic = (props) => {
           <TableHead>
             <TableRow>
               <TableCell align='center' colSpan={5}>
-                {topic?.title}
+                <h2> Topic: {topic?.title} </h2>
               </TableCell>
               <TableCell align='right'>
                 {' '}
@@ -153,8 +193,9 @@ const Topic = (props) => {
                   size='small'
                   color='secondary'
                   aria-label='add'
-                  to='/addreply'
-                  component={Link}
+                  //   to='/addreply'
+                  //   component={Link}
+                  onClick={() => addReply()}
                 >
                   <AddIcon />
                 </Fab>
@@ -179,12 +220,6 @@ const Topic = (props) => {
                   {columns.map((column) => {
                     const value = row[column.id];
 
-                    // return (
-                    //     <TableCell key={column.id} align={column.align}>
-                    //         {column.format && typeof value === 'number' ? column.format(value) : value}
-                    //     </TableCell>
-                    // )
-
                     if (column.id === 'edit') {
                       return (
                         <TableCell
@@ -192,11 +227,6 @@ const Topic = (props) => {
                           align={column.align}
                           style={{ marginRight: 15 }}
                         >
-                          {/* <Tooltip title="reply" content="reply" style={{ zIndex: 10000 }}>
-                                                        <IconButton aria-label="expand row" size="small" onClick={() => onCellClick('show', row)}>
-                                                            <Reply />
-                                                        </IconButton>
-                                                    </Tooltip> */}
                           <Tooltip
                             title='edit'
                             content='edit'
@@ -240,41 +270,25 @@ const Topic = (props) => {
                 </TableRow>
               );
             })}
-
-            {/* <TableCell key={column.id} align={column.align}>
-                            brada
-                                            </TableCell> */}
           </TableBody>
         </Table>
       </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[1, 10]}
+        rowsPerPageOptions={[10]}
         component='div'
         count={allItems}
         rowsPerPage={rowsPerPage}
         page={page}
         onChangePage={handleChangePage}
-        onChangeRowsPerPage={handleChangeRowsPerPage}
+        // onChangeRowsPerPage={handleChangeRowsPerPage}
+      />
+      <DataDialog
+        label='Add reply'
+        open={dialogIsOpen.isOpen}
+        onClose={closeDialog}
       />
     </Paper>
   );
 };
-// return <>
-//     <Grid container>
-//         <Grid item xs>
-//             <h1>{topic?.title}</h1>
-//         </Grid>
-//         {/* <Grid item>
-//             <Fab size="small" color="secondary" aria-label="add" to='/addtopic' component={Link} >
-//                 <AddIcon />
-//             </Fab>
-//         </Grid> */}
-//     </Grid>
-
-//     {loading && <CircularProgress />}
-//     {/* <div style={{ height: 300, width: '100%' }}>
-//         <DataGrid rows={repliesPage} columns={columns} pageSize={10} />
-//     </div> */}
-//  </>
-
+ 
 export default Topic;

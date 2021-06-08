@@ -72,9 +72,7 @@ const AllTopics = (props) => {
     setPage(0);
   };
 
-  const onCellClick = (action, params) => {
-    console.log(action);
-    console.log(params);
+  const onCellClick = (action, params) => { 
     switch (action) {
       case 'show':
         history.push(`/topic/${params.id}`);
@@ -90,11 +88,13 @@ const AllTopics = (props) => {
     }
   };
 
-  useEffect(() => {
-    loadTopics();
-  });
+  useEffect(() => { 
+      loadTopics();
+  },[]);
+ 
 
-  const loadTopics = (e) => {
+    const loadTopics = (e) => {
+      console.log('eheeee')
     API.get(`/topics/${page}/${rowsPerPage}/`)
       .then((res) => {
         setAllItems(res.data.count);
@@ -113,8 +113,8 @@ const AllTopics = (props) => {
         setTopics(res.data.result);
       })
       .catch((err) => console.log(err));
-  };
-
+    };
+  
   const [dialogIsOpen, setDialogIsOpen] = React.useState({
     isOpen: false,
   });
@@ -128,15 +128,15 @@ const AllTopics = (props) => {
 
   const closeDialog = (props) => {
     console.log(props);
-    if (props?.length > 0) { 
+    if (props?.length > 0) {
       const payload = {
-        userId: 1, // TODO where is user?
+        userId: 1, // TODO User..?
         title: props,
       };
 
       API.post('/topics', payload)
         .then((response) => {
-          loadTopics(); 
+          loadTopics();
         })
         .catch((error) => {
           console.log(error);
@@ -153,11 +153,10 @@ const AllTopics = (props) => {
           <TableHead>
             <TableRow>
               <TableCell align='center' colSpan={5}>
-                all topics
+                <h2> topics </h2>
               </TableCell>
               <TableCell align='right'>
                 <Fab size='small' color='secondary' aria-label='add'>
-                  {/* <Fab size="small" color="secondary" aria-label="add" to='/addtopic' component={Link} > */}
                   <AddIcon onClick={() => addTopic()} />
                 </Fab>
               </TableCell>
