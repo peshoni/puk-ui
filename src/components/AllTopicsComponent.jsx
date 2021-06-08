@@ -15,209 +15,265 @@ import ReplyAll from '@material-ui/icons/ReplyAll';
 import Moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import Tooltip from "react-simple-tooltip";
+import Tooltip from 'react-simple-tooltip';
 import API from '../services/api';
 import DataDialog from './DataDialog';
- 
-//const addActionRef = React.useRef(); 
+
+//const addActionRef = React.useRef();
 const columns = [
-    { id: 'id', label: 'id', minWidth: 70 },
-    { id: 'title', label: 'Title', width: 130 },
-    {
-        id: 'createdAt',
-        label: 'Created At',
-        width: 200,
-    },
-    { id: 'modifiedAt', label: 'Modified At', width: 200 },
-    {
-        id: 'fullName',
-        label: 'created by',
-        description: 'This column has a value getter and is not sortable.',
-        sortable: false,
-        width: 160,
-    },
-    {
-        id: 'edit',
-        label: 'edit', 
-    }
-]; 
+  { id: 'id', label: 'id', minWidth: 70 },
+  { id: 'title', label: 'Title', width: 130 },
+  {
+    id: 'createdAt',
+    label: 'Created At',
+    width: 200,
+  },
+  { id: 'modifiedAt', label: 'Modified At', width: 200 },
+  {
+    id: 'fullName',
+    label: 'created by',
+    description: 'This column has a value getter and is not sortable.',
+    sortable: false,
+    width: 160,
+  },
+  {
+    id: 'edit',
+    label: 'edit',
+  },
+];
 
 const useStyles = makeStyles({
-    root: {
-        width: '100%',
-    },
-    container: {
-        maxHeight: 600,
-    },
+  root: {
+    width: '100%',
+  },
+  container: {
+    maxHeight: 600,
+  },
 });
 
 const AllTopics = (props) => {
-    const history = useHistory();
-    Moment.locale('bg');
-    const classes = useStyles();
+  const history = useHistory();
+  Moment.locale('bg');
+  const classes = useStyles();
 
-    const [topics, setTopics] = useState([]);    
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
-    const [allItems, setAllItems] = React.useState(0);
-    const [editorId, setEditorId] = React.useState(0);
+  const [topics, setTopics] = useState([]);
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [allItems, setAllItems] = React.useState(0);
+  const [editorId, setEditorId] = React.useState(0);
 
-    const handleChangePage = (event, newPage) => {
-        console.log(event, newPage);
-        setPage(newPage);
-    };
+  const handleChangePage = (event, newPage) => {
+    console.log(event, newPage);
+    setPage(newPage);
+  };
 
-    const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(+event.target.value);
-        setPage(0);
-    };
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
 
-    const onCellClick = (action, params) => {
-        console.log(action);
-        console.log(params);  
-        switch (action) {
-            case 'show':
-                history.push(`/topic/${params.id}`);  
-            return;
-            case 'edit':
-                console.log(' EDIT ');
-            break;
-            case 'delete':
-                console.log(' DELETE ');
-            break; 
-            default:
-                break;
-        } 
-    } 
-
-    useEffect(() => {
-        API.get(`/topics/${page}/${rowsPerPage}/`)
-            .then(res => {
-                console.log(res);
-                setAllItems(res.data.count);
-                setEditorId(res.data.editorId);
-                res.data.result.forEach(element => {
-                    let u = element.user;
-                    element.fullName = u.firstName + ' ' + u.lastName + ' (' + u.role + ')';
-                    element.createdAt = Moment(element.createdAt).format('DD.MM.YYYY - HH:mm:ss').toString();
-                    element.modifiedAt = Moment(element.modifiedAt).format('DD.MM.YYYY - HH:mm:ss').toString();
-                });
-                setTopics(res.data.result);
-            })
-            .catch(err => console.log(err))
-    }, [page, rowsPerPage]);
-
-    const [dialogIsOpen, setDialogIsOpen] = React.useState({ isOpen: false, user: {} });;
-    const openDialog = (params) => setDialogIsOpen(params);
-
-    const closeDialog = (props) => {
-        console.log(props);
-        console.log('BRADA');
-        //setModalData(props); 
-        setDialogIsOpen({ isOpen:false, user: {}})
-    };
-
-    const addTopic = ( ) => {
-         let data = { isOpen: true , label: 'Add topic' }; 
-        openDialog(data); 
+  const onCellClick = (action, params) => {
+    console.log(action);
+    console.log(params);
+    switch (action) {
+      case 'show':
+        history.push(`/topic/${params.id}`);
+        return;
+      case 'edit':
+        console.log(' EDIT ');
+        break;
+      case 'delete':
+        console.log(' DELETE ');
+        break;
+      default:
+        break;
     }
- 
-    return (
+  };
 
-        <Paper className={classes.root}>
-            <TableContainer className={classes.container}>
-                <Table stickyHeader aria-label="sticky table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell align="center" colSpan={5}>
-                                all topics 
-                            </TableCell> 
-                            <TableCell align="right">
-                                 <Fab size="small" color="secondary" aria-label="add"  > 
-                                {/* <Fab size="small" color="secondary" aria-label="add" to='/addtopic' component={Link} > */}
-                                <AddIcon onClick={() => addTopic()} />
-                                </Fab>
-                            </TableCell>
-                        </TableRow>
-                        <TableRow>
-                                            {columns.map((column) => (
-                                                <TableCell
-                                                    key={column.id}
-                                                    align={column.align}
-                                                    style={{ minWidth: column.minWidth }}
-                                                >
-                                                    {column.label}
-                                                </TableCell>
-                                            ))}
-                                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {topics.map((row) => {
-                            return (
-                                <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
-                                    {columns.map((column) => {
-                                        const value = row[column.id];
+  useEffect(() => {
+    loadTopics();
+  });
 
-                                        if (column.id === 'edit') { 
-                                           // console.log(editorId , row.user.id);
-                                             if (row.user.id === editorId) {
-                                                 return ( 
-                                                <TableCell key={row.id} align={column.align} style={{ marginRight: 15 }}> 
-                                                    <Tooltip title="comments" content="comments"  style={{zIndex:10000}}> 
-                                                        <IconButton aria-label="expand row" size="small" onClick={()=>onCellClick('show',row)}>
-                                                        <ReplyAll /> 
-                                                        </IconButton>
-                                                    </Tooltip> 
-                                                    <Tooltip  title="edit" content="edit"  style={{zIndex:10000}}> 
-                                                        <IconButton aria-label="expand row" size="small"
-                                                            disabled ={ row.user.id !== editorId}
-                                                            onClick={() => onCellClick('edit', row)}>
-                                                            < EditIcon />
-                                                        </IconButton>
-                                                    </Tooltip> 
-                                                </TableCell>
-                                            )
-                                              } else {
-                                                 return ( 
-                                                <TableCell key={row.id} align={column.align} style={{ marginRight: 15 }}> 
-                                                    <Tooltip title="comments" content="comments"  style={{zIndex:10000}}> 
-                                                        <IconButton aria-label="expand row" size="small" onClick={()=>onCellClick('show',row)}>
-                                                        <ReplyAll /> 
-                                                        </IconButton>
-                                                    </Tooltip>  
-                                                </TableCell>
-                                            )
-                                             }
-                                            
-                                        } else {
-                                            return (
-                                                <TableCell key={column.id} align={column.align}>
-                                                    {column.format && typeof value === 'number' ? column.format(value) : value}
-                                                </TableCell>
-                                            )
-                                        }
-                                    })}
-                                </TableRow>
-                            );
-                        })} 
-                        {/* <TableCell key={column.id} align={column.align}>
-                            brada
-                                            </TableCell> */}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-            <TablePagination
-                rowsPerPageOptions={[5, 10]}
-                component="div" 
-                count={allItems}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onChangePage={handleChangePage}
-                onChangeRowsPerPage={handleChangeRowsPerPage}
-            />
-             <DataDialog  label='Add Topic' open={dialogIsOpen.isOpen} onClose={closeDialog}  />
-        </Paper>
-    );
-}
+  const loadTopics = (e) => {
+    API.get(`/topics/${page}/${rowsPerPage}/`)
+      .then((res) => {
+        setAllItems(res.data.count);
+        setEditorId(res.data.editorId);
+        res.data.result.forEach((element) => {
+          let u = element.user;
+          element.fullName =
+            u.firstName + ' ' + u.lastName + ' (' + u.role + ')';
+          element.createdAt = Moment(element.createdAt)
+            .format('DD.MM.YYYY - HH:mm:ss')
+            .toString();
+          element.modifiedAt = Moment(element.modifiedAt)
+            .format('DD.MM.YYYY - HH:mm:ss')
+            .toString();
+        });
+        setTopics(res.data.result);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const [dialogIsOpen, setDialogIsOpen] = React.useState({
+    isOpen: false,
+  });
+
+  const addTopic = () => {
+    let data = { isOpen: true, label: 'Add topic' };
+    openDialog(data);
+  };
+
+  const openDialog = (params) => setDialogIsOpen(params);
+
+  const closeDialog = (props) => {
+    console.log(props);
+    if (props?.length > 0) { 
+      const payload = {
+        userId: 1, // TODO where is user?
+        title: props,
+      };
+
+      API.post('/topics', payload)
+        .then((response) => {
+          loadTopics(); 
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+
+    setDialogIsOpen({ isOpen: false });
+  };
+
+  return (
+    <Paper className={classes.root}>
+      <TableContainer className={classes.container}>
+        <Table stickyHeader aria-label='sticky table'>
+          <TableHead>
+            <TableRow>
+              <TableCell align='center' colSpan={5}>
+                all topics
+              </TableCell>
+              <TableCell align='right'>
+                <Fab size='small' color='secondary' aria-label='add'>
+                  {/* <Fab size="small" color="secondary" aria-label="add" to='/addtopic' component={Link} > */}
+                  <AddIcon onClick={() => addTopic()} />
+                </Fab>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              {columns.map((column) => (
+                <TableCell
+                  key={column.id}
+                  align={column.align}
+                  style={{ minWidth: column.minWidth }}
+                >
+                  {column.label}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {topics.map((row) => {
+              return (
+                <TableRow hover role='checkbox' tabIndex={-1} key={row.id}>
+                  {columns.map((column) => {
+                    const value = row[column.id];
+
+                    if (column.id === 'edit') {
+                      // console.log(editorId , row.user.id);
+                      if (row.user.id === editorId) {
+                        return (
+                          <TableCell
+                            key={row.id}
+                            align={column.align}
+                            style={{ marginRight: 15 }}
+                          >
+                            <Tooltip
+                              title='comments'
+                              content='comments'
+                              style={{ zIndex: 10000 }}
+                            >
+                              <IconButton
+                                aria-label='expand row'
+                                size='small'
+                                onClick={() => onCellClick('show', row)}
+                              >
+                                <ReplyAll />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip
+                              title='edit'
+                              content='edit'
+                              style={{ zIndex: 10000 }}
+                            >
+                              <IconButton
+                                aria-label='expand row'
+                                size='small'
+                                disabled={row.user.id !== editorId}
+                                onClick={() => onCellClick('edit', row)}
+                              >
+                                <EditIcon />
+                              </IconButton>
+                            </Tooltip>
+                          </TableCell>
+                        );
+                      } else {
+                        return (
+                          <TableCell
+                            key={row.id}
+                            align={column.align}
+                            style={{ marginRight: 15 }}
+                          >
+                            <Tooltip
+                              title='comments'
+                              content='comments'
+                              style={{ zIndex: 10000 }}
+                            >
+                              <IconButton
+                                aria-label='expand row'
+                                size='small'
+                                onClick={() => onCellClick('show', row)}
+                              >
+                                <ReplyAll />
+                              </IconButton>
+                            </Tooltip>
+                          </TableCell>
+                        );
+                      }
+                    } else {
+                      return (
+                        <TableCell key={column.id} align={column.align}>
+                          {column.format && typeof value === 'number'
+                            ? column.format(value)
+                            : value}
+                        </TableCell>
+                      );
+                    }
+                  })}
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[5, 10]}
+        component='div'
+        count={allItems}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onChangePage={handleChangePage}
+        onChangeRowsPerPage={handleChangeRowsPerPage}
+      />
+      <DataDialog
+        label='Add Topic'
+        open={dialogIsOpen.isOpen}
+        onClose={closeDialog}
+      />
+    </Paper>
+  );
+};
 
 export default AllTopics;
