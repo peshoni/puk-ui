@@ -16,7 +16,6 @@ import axios from 'axios';
 import { React, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-
 function Copyright() {
     return (
         <Typography variant="body2" color="textSecondary" align="center">
@@ -69,8 +68,7 @@ const SignIn = (props) => {
                 password: 'admin'
             }
         });
-
-
+        
         const form = new FormData();
         form.append('username', username);
         form.append('password', password);
@@ -80,13 +78,11 @@ const SignIn = (props) => {
                 localStorage.setItem('access_token', response.data.access_token);
                 localStorage.setItem('refresh_token', response.data.refresh_token);
                 localStorage.setItem('username', username);
-                history.push('/home')
+                history.push('/home');
             })
             .catch(function (error) {
                 console.log(error);
-            });
-
-
+            }); 
     }
 
     return (

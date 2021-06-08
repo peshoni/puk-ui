@@ -8,25 +8,19 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import Moment from 'moment';
 import { default as React, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import Tooltip from "react-simple-tooltip";
 import API from '../services/api';
+import UserFormDialog from './UserFormDialog';
 
 
 //const addActionRef = React.useRef();
 
 const columns = [
-    { id: 'id', label: 'id', minWidth: 70 },
-    // { id: 'title', label: 'Title', width: 130 },
-    // {
-    //     id: 'createdAt',
-    //     label: 'Created At',
-    //     width: 200,
-    // },
+    { id: 'id', label: 'id', minWidth: 70 }, 
       {
         id: 'createdAt',
         label: 'created at',
@@ -72,12 +66,9 @@ const columns = [
     }, 
     {
         id: 'edit',
-        label: 'edit',
- 
+        label: 'edit', 
     }
-];
-
-
+]; 
 
 const useStyles = makeStyles({
     root: {
@@ -94,11 +85,11 @@ const AllUsers = (props) => {
     Moment.locale('bg');
     const classes = useStyles();
 
-    const [users, setUsers] = useState([]);
-    
+    const [users, setUsers] = useState([]);    
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [allItems, setAllItems] = React.useState(0);
+   
 
     const handleChangePage = (event, newPage) => {
         console.log(event, newPage);
@@ -108,26 +99,7 @@ const AllUsers = (props) => {
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(+event.target.value);
         setPage(0);
-    };
-
-    const onCellClick = (action, params) => {
-        console.log(action);
-        console.log(params);
-        switch (action) {
-          
-            case 'edit':
-               alert(' EDIT - Not implemented ');
-            break;
-            case 'delete':
-                alert(' DELETE - Not implemented ');  
-            break;
-        
-            default:
-                break;
-        }
-      
-    }
-   
+    }; 
 
     useEffect(() => {
         console.log('oooo')
@@ -135,11 +107,7 @@ const AllUsers = (props) => {
             .then(res => {
                 console.log(res);
                 setAllItems(res.data.count);
-                res.data.result.forEach(element => {
-                    // let u = element.user;
-                    // element.fullName = u.firstName + ' ' + u.lastName + ' (' + u.role + ')';
-                    console.log(element );
-                    
+                res.data.result.forEach(element => {                     
                       element.createdAt = Moment(element.createdAt).format('DD.MM.YYYY - HH:mm:ss').toString();
                       element.modifiedAt = Moment(element.modifiedAt).format('DD.MM.YYYY - HH:mm:ss').toString();
                 });
@@ -147,6 +115,28 @@ const AllUsers = (props) => {
             })
             .catch(err => console.log(err))
     }, [page, rowsPerPage]);
+
+
+
+   
+    const [dialogIsOpen, setDialogIsOpen] = React.useState({ isOpen: false, user: {} });;
+    const openDialog = (params) => setDialogIsOpen(params);
+
+    const closeDialog = (props) => {
+        console.log(props);
+        console.log('BRADA');
+        //setModalData(props); 
+        setDialogIsOpen({ isOpen:false, user: {}})
+    };
+
+    const onCellClick = (action, params) => {
+     //   console.log(params)
+        
+        let data = { isOpen: true, user: params};
+        console.log(data);
+        openDialog(data);
+    }
+   
  
     return (
 
@@ -155,9 +145,8 @@ const AllUsers = (props) => {
                 <Table stickyHeader aria-label="sticky table">
                     <TableHead>
                         <TableRow>
-                            <TableCell align="center" colSpan={5}>
-                                all Users
-                               
+                            <TableCell align="center" colSpan={57}>
+                               Users
                             </TableCell>
                             {/* <TableCell align="right"> <Fab size="small" color="secondary" aria-label="add" to='/addUser' component={Link} >
                                 <AddIcon />
@@ -188,12 +177,7 @@ const AllUsers = (props) => {
                                                         <IconButton aria-label="expand row" size="small" onClick={() => onCellClick('edit', row)}>
                                                             < EditIcon />
                                                         </IconButton>
-                                                    </Tooltip>
-                                                    <Tooltip title="delete" content="delete" style={{ zIndex: 10000 }}>
-                                                        <IconButton aria-label="expand row" size="small" onClick={() => onCellClick('delete', row)}>
-                                                            <DeleteIcon />
-                                                        </IconButton>
-                                                    </Tooltip>
+                                                    </Tooltip> 
                                                 </TableCell>
                                             )
                                         } else {
@@ -206,9 +190,7 @@ const AllUsers = (props) => {
                                     })}
                                 </TableRow>
                             );
-                        })}
-
-                     
+                        })}  
                     </TableBody>
                 </Table>
             </TableContainer>
@@ -221,6 +203,7 @@ const AllUsers = (props) => {
                 onChangePage={handleChangePage}
                 onChangeRowsPerPage={handleChangeRowsPerPage}
             />
+            <UserFormDialog user={ dialogIsOpen.user} open={dialogIsOpen.isOpen} onClose={closeDialog}  />
         </Paper>
     );
 }

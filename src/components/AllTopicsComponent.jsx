@@ -14,13 +14,12 @@ import EditIcon from '@material-ui/icons/Edit';
 import ReplyAll from '@material-ui/icons/ReplyAll';
 import Moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import Tooltip from "react-simple-tooltip";
 import API from '../services/api';
-
+import DataDialog from './DataDialog';
  
-//const addActionRef = React.useRef();
-
+//const addActionRef = React.useRef(); 
 const columns = [
     { id: 'id', label: 'id', minWidth: 70 },
     { id: 'title', label: 'Title', width: 130 },
@@ -41,9 +40,7 @@ const columns = [
         id: 'edit',
         label: 'edit', 
     }
-];
-
-
+]; 
 
 const useStyles = makeStyles({
     root: {
@@ -77,24 +74,21 @@ const AllTopics = (props) => {
 
     const onCellClick = (action, params) => {
         console.log(action);
-        console.log(params);
+        console.log(params);  
         switch (action) {
             case 'show':
-                history.push(`/topic/${params.id}`);
+                history.push(`/topic/${params.id}`);  
             return;
             case 'edit':
                 console.log(' EDIT ');
             break;
             case 'delete':
                 console.log(' DELETE ');
-            break;
-        
+            break; 
             default:
                 break;
-        }
-      
-    }
-   
+        } 
+    } 
 
     useEffect(() => {
         API.get(`/topics/${page}/${rowsPerPage}/`)
@@ -112,6 +106,21 @@ const AllTopics = (props) => {
             })
             .catch(err => console.log(err))
     }, [page, rowsPerPage]);
+
+    const [dialogIsOpen, setDialogIsOpen] = React.useState({ isOpen: false, user: {} });;
+    const openDialog = (params) => setDialogIsOpen(params);
+
+    const closeDialog = (props) => {
+        console.log(props);
+        console.log('BRADA');
+        //setModalData(props); 
+        setDialogIsOpen({ isOpen:false, user: {}})
+    };
+
+    const addTopic = ( ) => {
+         let data = { isOpen: true , label: 'Add topic' }; 
+        openDialog(data); 
+    }
  
     return (
 
@@ -121,24 +130,26 @@ const AllTopics = (props) => {
                     <TableHead>
                         <TableRow>
                             <TableCell align="center" colSpan={5}>
-                                all topics
-                               
+                                all topics 
+                            </TableCell> 
+                            <TableCell align="right">
+                                 <Fab size="small" color="secondary" aria-label="add"  > 
+                                {/* <Fab size="small" color="secondary" aria-label="add" to='/addtopic' component={Link} > */}
+                                <AddIcon onClick={() => addTopic()} />
+                                </Fab>
                             </TableCell>
-                            <TableCell align="right"> <Fab size="small" color="secondary" aria-label="add" to='/addtopic' component={Link} >
-                                <AddIcon />
-                            </Fab></TableCell>
                         </TableRow>
                         <TableRow>
-                            {columns.map((column) => (
-                                <TableCell
-                                    key={column.id}
-                                    align={column.align}
-                                    style={{ minWidth: column.minWidth }}
-                                >
-                                    {column.label}
-                                </TableCell>
-                            ))}
-                        </TableRow>
+                                            {columns.map((column) => (
+                                                <TableCell
+                                                    key={column.id}
+                                                    align={column.align}
+                                                    style={{ minWidth: column.minWidth }}
+                                                >
+                                                    {column.label}
+                                                </TableCell>
+                                            ))}
+                                        </TableRow>
                     </TableHead>
                     <TableBody>
                         {topics.map((row) => {
@@ -147,9 +158,8 @@ const AllTopics = (props) => {
                                     {columns.map((column) => {
                                         const value = row[column.id];
 
-                                        if (column.id === 'edit') {
-                                            console.log(row.user.id);
-                                            console.log(editorId);
+                                        if (column.id === 'edit') { 
+                                           // console.log(editorId , row.user.id);
                                              if (row.user.id === editorId) {
                                                  return ( 
                                                 <TableCell key={row.id} align={column.align} style={{ marginRight: 15 }}> 
@@ -169,8 +179,7 @@ const AllTopics = (props) => {
                                             )
                                               } else {
                                                  return ( 
-                                                <TableCell key={row.id} align={column.align} style={{ marginRight: 15 }}>
-                                                    
+                                                <TableCell key={row.id} align={column.align} style={{ marginRight: 15 }}> 
                                                     <Tooltip title="comments" content="comments"  style={{zIndex:10000}}> 
                                                         <IconButton aria-label="expand row" size="small" onClick={()=>onCellClick('show',row)}>
                                                         <ReplyAll /> 
@@ -190,8 +199,7 @@ const AllTopics = (props) => {
                                     })}
                                 </TableRow>
                             );
-                        })}
-
+                        })} 
                         {/* <TableCell key={column.id} align={column.align}>
                             brada
                                             </TableCell> */}
@@ -207,6 +215,7 @@ const AllTopics = (props) => {
                 onChangePage={handleChangePage}
                 onChangeRowsPerPage={handleChangeRowsPerPage}
             />
+             <DataDialog  label='Add Topic' open={dialogIsOpen.isOpen} onClose={closeDialog}  />
         </Paper>
     );
 }
