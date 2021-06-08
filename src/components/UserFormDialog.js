@@ -9,10 +9,7 @@ import { React, useState } from 'react';
 export default function UserFormDialog(props) {
   console.log(props);
   const { open, onClose } = props;
-
   const [user, setUser] = useState();
-
-  // setUser(props);
 
   console.log(user);
   // setUser(_.clone(props?.user));
