@@ -4,6 +4,7 @@ import Home from './HomeComponent';
 import SignIn from './SignInComponent';
 import SignUp from './SignUpComponent';
 import Topic from './TopicComponent';
+import Context from './UserProvider';
 
 
 export {
@@ -12,6 +13,7 @@ export {
     SignIn,
     SignUp,
     AllTopics,
-    Topic
+    Topic,
+    Context
 };
 

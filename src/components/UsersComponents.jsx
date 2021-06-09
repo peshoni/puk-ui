@@ -78,7 +78,8 @@ const useStyles = makeStyles({
   },
 });
 
-const AllUsers = (props) => {
+const AllUsers = (props ) => {
+ 
   const history = useHistory();
   Moment.locale('bg');
   const classes = useStyles();
@@ -131,8 +132,7 @@ const AllUsers = (props) => {
   };
 
   const onCellClick = (action, params) => {
-    //   console.log(params)
-
+    //   console.log(params) 
     let data = { isOpen: true, user: params };
     console.log(data);
     openDialog(data);
