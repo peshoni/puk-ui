@@ -63,7 +63,6 @@ const AllTopics = (props) => {
   const [editorId, setEditorId] = React.useState(0);
 
   const handleChangePage = (event, newPage) => {
-    console.log(event, newPage);
     setPage(newPage);
   };
 
@@ -72,7 +71,7 @@ const AllTopics = (props) => {
     setPage(0);
   };
 
-  const onCellClick = (action, params) => { 
+  const onCellClick = (action, params) => {
     switch (action) {
       case 'show':
         history.push(`/topic/${params.id}`);
@@ -88,13 +87,12 @@ const AllTopics = (props) => {
     }
   };
 
-  useEffect(() => { 
-      loadTopics();
-  },[]);
- 
+  useEffect(() => {
+    loadTopics();
+  }, []);
 
-    const loadTopics = (e) => {
-      console.log('eheeee')
+  const loadTopics = (e) => {
+    
     API.get(`/topics/${page}/${rowsPerPage}/`)
       .then((res) => {
         setAllItems(res.data.count);
@@ -113,8 +111,8 @@ const AllTopics = (props) => {
         setTopics(res.data.result);
       })
       .catch((err) => console.log(err));
-    };
-  
+  };
+
   const [dialogIsOpen, setDialogIsOpen] = React.useState({
     isOpen: false,
   });
@@ -126,8 +124,7 @@ const AllTopics = (props) => {
 
   const openDialog = (params) => setDialogIsOpen(params);
 
-  const closeDialog = (props) => {
-    console.log(props);
+  const closeDialog = (props) => { 
     if (props?.length > 0) {
       const payload = {
         userId: 1, // TODO User..?
@@ -180,8 +177,7 @@ const AllTopics = (props) => {
                   {columns.map((column) => {
                     const value = row[column.id];
 
-                    if (column.id === 'edit') {
-                      // console.log(editorId , row.user.id);
+                    if (column.id === 'edit') {                      
                       if (row.user.id === editorId) {
                         return (
                           <TableCell

@@ -79,8 +79,8 @@ const SignIn = (props) => {
                 localStorage.setItem('refresh_token', response.data.refresh_token);
                 console.log(username);
                 localStorage.setItem('username', username);
-               // history.push('/home');
-                window.location = "/home";
+                history.push('/home');
+                //window.location = "/home";
             })
             .catch(function (error) {
                 console.log(error);

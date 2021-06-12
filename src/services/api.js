@@ -56,17 +56,14 @@ const refreshAuthLogic = failedRequest => {
 // export const login = (u, p, redirectTo) => {
 
 //     console.log(u, p, redirectTo);
-//     return;
-
+//     return; 
 //     const api = axios.create({
 //         baseURL: 'http://localhost:8082',
 //         auth: {
 //             username: 'admin',
 //             password: 'admin'
 //         }
-//     });
-
-
+//     }); 
 //     const form = new FormData();
 //     form.append('username', u);
 //     form.append('password', p);

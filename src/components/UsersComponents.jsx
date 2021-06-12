@@ -78,8 +78,7 @@ const useStyles = makeStyles({
   },
 });
 
-const AllUsers = (props ) => {
- 
+const AllUsers = (props) => {
   const history = useHistory();
   Moment.locale('bg');
   const classes = useStyles();
@@ -90,7 +89,6 @@ const AllUsers = (props ) => {
   const [allItems, setAllItems] = React.useState(0);
 
   const handleChangePage = (event, newPage) => {
-    console.log(event, newPage);
     setPage(newPage);
   };
 
@@ -100,10 +98,12 @@ const AllUsers = (props ) => {
   };
 
   useEffect(() => {
-    console.log('oooo');
+    loadUsers();
+  }, []);
+
+  const loadUsers = (e) => {
     API.get(`/users`)
       .then((res) => {
-        console.log(res);
         setAllItems(res.data.count);
         res.data.result.forEach((element) => {
           element.createdAt = Moment(element.createdAt)
@@ -116,7 +116,7 @@ const AllUsers = (props ) => {
         setUsers(res.data.result);
       })
       .catch((err) => console.log(err));
-  }, [page, rowsPerPage]);
+  };
 
   const [dialogIsOpen, setDialogIsOpen] = React.useState({
     isOpen: false,
@@ -125,16 +125,27 @@ const AllUsers = (props ) => {
   const openDialog = (params) => setDialogIsOpen(params);
 
   const closeDialog = (props) => {
-    console.log(props);
-    console.log('BRADA');
-    //setModalData(props);
+    if (props.result === 'ok') {
+      let us = props.user;
+      delete us.createdAt;
+      delete us.updatedAt;
+      us.modifiedAt = new Date();
+
+      API.post('/users/up/', us)
+        .then((response) => {
+          loadUsers();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+
     setDialogIsOpen({ isOpen: false, user: {} });
   };
 
   const onCellClick = (action, params) => {
-    //   console.log(params) 
     let data = { isOpen: true, user: params };
-    console.log(data);
+
     openDialog(data);
   };
 

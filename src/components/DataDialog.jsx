@@ -6,9 +6,9 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 import { React, useState } from 'react';
 
-export default function DataDialog(props) { 
+export default function DataDialog(props) {
   const { open, onClose } = props;
-  const [userResponse, setUserResponse] = useState('');  
+  const [userResponse, setUserResponse] = useState('');
   return (
     <Dialog open={open} onClose={onClose} aria-labelledby='form-dialog-title'>
       <DialogTitle id='form-dialog-title'> {props.label} </DialogTitle>

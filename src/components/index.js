@@ -1,10 +1,10 @@
 import AllTopics from './AllTopicsComponent';
 import Header from './Header';
 import Home from './HomeComponent';
+import MyProvider from './MyProvider';
 import SignIn from './SignInComponent';
 import SignUp from './SignUpComponent';
 import Topic from './TopicComponent';
-import Context from './UserProvider';
 
 
 export {
@@ -14,6 +14,6 @@ export {
     SignUp,
     AllTopics,
     Topic,
-    Context
+    MyProvider
 };
 
