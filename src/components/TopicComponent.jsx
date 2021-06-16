@@ -17,7 +17,7 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import Tooltip from 'react-simple-tooltip';
 import API from '../services/api';
-import User from '../services/user';
+import UserService from '../services/user-service';
 import DataDialog from './DataDialog';
 
 const columns = [
@@ -51,9 +51,8 @@ const useStyles = makeStyles({
   },
 });
 
-const Topic = (props) => {
-  const userId = User.id;
-  console.log('USER: ' + userId);
+const Topic = (props) => { 
+  const [user, doNothing] = useState(UserService.getUSer());
   const [topic, setTopic] = useState();
   const [repliesPage, setRepliesPage] = useState([]);
 
@@ -70,6 +69,8 @@ const Topic = (props) => {
   const history = useHistory();
 
   useEffect(() => {
+    console.log('Ieeeeee')
+    console.log(user);
     loadTopic(topicId, page, rowsPerPage);
   }, []);
 
@@ -247,7 +248,7 @@ const Topic = (props) => {
                             style={{ zIndex: 10000 }}
                           >
                             <IconButton
-                              disabled={userId === row.user.id}
+                              disabled={user.id === row.user.id}
                               aria-label='expand row'
                               size='small'
                               onClick={() => onCellClick('delete', row)}

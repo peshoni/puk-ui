@@ -4,13 +4,7 @@ import './App.css';
 import { AllTopics, Header, Home, SignIn, SignUp, Topic } from './components';
 import AllUsers from './components/UsersComponents';
 
-function App() {
-  // const [user, setUser] = useState({});
-
-  // const callbackFunction = (childData) => {
-  //   console.log(childData);
-  //   this.setState({ message: childData });
-  // };
+function App() { 
   return ( 
     <BrowserRouter>
       <div className='App'>

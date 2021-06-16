@@ -1,6 +1,5 @@
 import axios from 'axios';
 import createAuthRefreshInterceptor from 'axios-auth-refresh';
-import User from '../services/user';
 
 const inst = axios.create({
     baseURL: 'http://localhost:8082/api',
@@ -23,10 +22,7 @@ inst.interceptors.response.use(function (response) {
     return response;
 }, function (error) {
     if (401 === error.response.status) {
-
-        // handle error: inform user, go to login, etc
-        // go go -> to login page
-        User.id = 0;
+ 
         localStorage.clear();
         window.location.href = '/';
     } else {
@@ -51,37 +47,7 @@ const refreshAuthLogic = failedRequest => {
 
             return Promise.resolve();
         });
-};
-
-// export const login = (u, p, redirectTo) => {
-
-//     console.log(u, p, redirectTo);
-//     return; 
-//     const api = axios.create({
-//         baseURL: 'http://localhost:8082',
-//         auth: {
-//             username: 'admin',
-//             password: 'admin'
-//         }
-//     }); 
-//     const form = new FormData();
-//     form.append('username', u);
-//     form.append('password', p);
-
-//     api.post('/oauth/token?grant_type=password', form, { headers: { "Content-Type": "multipart/form-data" } })
-//         .then(function (response) {
-//             localStorage.setItem('access_token', response.data.access_token);
-//             localStorage.setItem('refresh_token', response.data.refresh_token);
-//             window.location.href = redirectTo;
-//         })
-//         .catch(function (error) {
-//             console.log(error);
-//         });
-
-// }
-
-
-
+}; 
 
 // Instantiate the interceptor (you can chain it as it returns the axios instance)
 createAuthRefreshInterceptor(inst, refreshAuthLogic);
