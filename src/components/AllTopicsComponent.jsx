@@ -17,6 +17,7 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import Tooltip from 'react-simple-tooltip';
 import API from '../services/api';
+import UserService from '../services/user-service';
 import DataDialog from './DataDialog';
 
 //const addActionRef = React.useRef();
@@ -54,13 +55,14 @@ const useStyles = makeStyles({
 const AllTopics = (props) => {
   const history = useHistory();
   Moment.locale('bg');
-  const classes = useStyles();
+  const classes = useStyles(); 
 
   const [topics, setTopics] = useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [allItems, setAllItems] = React.useState(0);
-  const [editorId, setEditorId] = React.useState(0);
+  const [user, doNothing] = useState(UserService.getUSer());
+  //const [editorId, setEditorId] = React.useState(0);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -95,8 +97,7 @@ const AllTopics = (props) => {
     
     API.get(`/topics/${page}/${rowsPerPage}/`)
       .then((res) => {
-        setAllItems(res.data.count);
-        setEditorId(res.data.editorId);
+        setAllItems(res.data.count); 
         res.data.result.forEach((element) => {
           let u = element.user;
           element.fullName =
@@ -178,7 +179,7 @@ const AllTopics = (props) => {
                     const value = row[column.id];
 
                     if (column.id === 'edit') {                      
-                      if (row.user.id === editorId) {
+                      if (row.user.id === user?.id) {
                         return (
                           <TableCell
                             key={row.id}
@@ -206,7 +207,7 @@ const AllTopics = (props) => {
                               <IconButton
                                 aria-label='expand row'
                                 size='small'
-                                disabled={row.user.id !== editorId}
+                                disabled={row.user.id !== user?.id}
                                 onClick={() => onCellClick('edit', row)}
                               >
                                 <EditIcon />

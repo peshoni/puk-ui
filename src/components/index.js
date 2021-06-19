@@ -1,7 +1,6 @@
 import AllTopics from './AllTopicsComponent';
 import Header from './Header';
 import Home from './HomeComponent';
-import MyProvider from './MyProvider';
 import SignIn from './SignInComponent';
 import SignUp from './SignUpComponent';
 import Topic from './TopicComponent';
@@ -13,7 +12,6 @@ export {
     SignIn,
     SignUp,
     AllTopics,
-    Topic,
-    MyProvider
+    Topic
 };
 

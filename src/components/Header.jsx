@@ -14,9 +14,9 @@ import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Group from '@material-ui/icons/Group';
 import List from '@material-ui/icons/List';
 import MenuIcon from '@material-ui/icons/Menu';
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-
+import UserService from '../services/user-service';
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -32,7 +32,8 @@ const useStyles = makeStyles((theme) => ({
 const Header = (props) => {
   console.log(props);
   const classes = useStyles();
-
+  const [user, doNothing] = useState(UserService.getUSer());
+  console.log(user);
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
@@ -77,15 +78,17 @@ const Header = (props) => {
   return (
     <AppBar position='static'>
       <Toolbar>
-        <IconButton
-          edge='start'
-          className={classes.menuButton}
-          color='inherit'
-          aria-label='menu'
-          onClick={handleClick}
-        >
-          <MenuIcon />
-        </IconButton>
+        {user !== null && (
+          <IconButton
+            edge='start'
+            className={classes.menuButton}
+            color='inherit'
+            aria-label='menu'
+            onClick={handleClick}
+          >
+            <MenuIcon />
+          </IconButton>
+        )}
         <StyledMenu
           id='customized-menu'
           anchorEl={anchorEl}
@@ -108,14 +111,19 @@ const Header = (props) => {
         </StyledMenu>
 
         <Typography variant='h6' className={classes.title}>
-          <LinkUI to='/home' color='inherit' component={Link}>
-            Home
-          </LinkUI>
+          {' '}
+          {user !== null && (
+            <LinkUI to='/home' color='inherit' component={Link}>
+              Home
+            </LinkUI>
+          )}
         </Typography>
 
-        <Button color='inherit' to='/' component={Link}>
-          Sign in
-        </Button>
+        {user === null && (
+          <Button color='inherit' to='/' component={Link}>
+            Sign in
+          </Button>
+        )}
       </Toolbar>
     </AppBar>
   );

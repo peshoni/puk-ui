@@ -10,13 +10,17 @@ const UserService = {
     localStorage.setItem('user', encrypted); 
   },
   getUSer: function () {
-    var bytes = CryptoJS.AES.decrypt(
-      localStorage.getItem('user'),
-      'yellowGreenBeard'
-    );
-    var originalText = bytes.toString(CryptoJS.enc.Utf8);
-    let us = JSON.parse(originalText);
-    return us;
+    try {
+      var bytes = CryptoJS.AES.decrypt(
+        localStorage.getItem('user'),
+        'yellowGreenBeard'
+      );
+      var originalText = bytes.toString(CryptoJS.enc.Utf8);
+      let us = JSON.parse(originalText);
+      return us;
+    } catch (error) {
+      return null;
+    } 
   },
 };
 export default UserService;

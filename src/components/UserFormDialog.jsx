@@ -54,7 +54,36 @@ export default function UserFormDialog(props) {
           onChange={(e) => {
             textChanged("lastName", e.target.value);
           }}
-        />{' '}
+        />
+         <TextField
+          variant='outlined'
+          margin='normal'
+          id='username'
+          name='username'
+          label='username'
+          type='text'
+          fullWidth
+          value={user.username}
+          onChange={(e) => {
+            textChanged("username", e.target.value);
+          }}
+          
+        />
+         <TextField
+          variant='outlined'
+          margin='normal'
+          id='password'
+          name='password'
+          label='password'
+          type='text'
+          fullWidth
+          value={user.password}
+          onChange={(e) => {
+            textChanged("password", e.target.value);
+          }}
+        />
+        
+        
       </DialogContent>
       <DialogActions>
         <Button
