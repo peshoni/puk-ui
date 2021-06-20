@@ -15,7 +15,7 @@ import Group from '@material-ui/icons/Group';
 import List from '@material-ui/icons/List';
 import MenuIcon from '@material-ui/icons/Menu';
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import UserService from '../services/user-service';
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -29,13 +29,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Header = (props) => {
-  console.log(props);
+const Header = (props) => { 
   const classes = useStyles();
-  const [user, doNothing] = useState(UserService.getUSer());
+  const [user,setUser] = useState(UserService.getUSer() );
   console.log(user);
   const [anchorEl, setAnchorEl] = React.useState(null);
-
+  const history = useHistory();
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -75,6 +74,12 @@ const Header = (props) => {
     },
   }))(MenuItem);
 
+  const handleLogout = () => {
+    localStorage.clear();
+    setUser(null);
+    history.push('/'); 
+  };
+
   return (
     <AppBar position='static'>
       <Toolbar>
@@ -102,6 +107,7 @@ const Header = (props) => {
             </ListItemIcon>
             <ListItemText primary='Users' />
           </StyledMenuItem>
+          
           <StyledMenuItem to='/topics' component={Link} onClick={handleClose}>
             <ListItemIcon>
               <List fontSize='small' />
@@ -123,6 +129,13 @@ const Header = (props) => {
           <Button color='inherit' to='/' component={Link}>
             Sign in
           </Button>
+        )}
+          {user !== null && (<div>
+          <Button color='inherit' onClick={handleLogout} >
+            Logout  
+          </Button>
+          <div> {user.firstName} {user.lastName} ({user.role})</div>
+          </div>
         )}
       </Toolbar>
     </AppBar>

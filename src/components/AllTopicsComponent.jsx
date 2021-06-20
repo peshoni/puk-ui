@@ -10,6 +10,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import AddIcon from '@material-ui/icons/Add';
+import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import ReplyAll from '@material-ui/icons/ReplyAll';
 import Moment from 'moment';
@@ -55,13 +56,13 @@ const useStyles = makeStyles({
 const AllTopics = (props) => {
   const history = useHistory();
   Moment.locale('bg');
-  const classes = useStyles(); 
+  const classes = useStyles();
 
   const [topics, setTopics] = useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [allItems, setAllItems] = React.useState(0);
-  const [user, doNothing] = useState(UserService.getUSer());
+  const [user, setUser] = useState(UserService.getUSer());
   //const [editorId, setEditorId] = React.useState(0);
 
   const handleChangePage = (event, newPage) => {
@@ -94,10 +95,9 @@ const AllTopics = (props) => {
   }, []);
 
   const loadTopics = (e) => {
-    
     API.get(`/topics/${page}/${rowsPerPage}/`)
       .then((res) => {
-        setAllItems(res.data.count); 
+        setAllItems(res.data.count);
         res.data.result.forEach((element) => {
           let u = element.user;
           element.fullName =
@@ -125,7 +125,7 @@ const AllTopics = (props) => {
 
   const openDialog = (params) => setDialogIsOpen(params);
 
-  const closeDialog = (props) => { 
+  const closeDialog = (props) => {
     if (props?.length > 0) {
       const payload = {
         userId: 1, // TODO User..?
@@ -142,6 +142,16 @@ const AllTopics = (props) => {
     }
 
     setDialogIsOpen({ isOpen: false });
+  };
+
+  const canEditThis = (id) => {
+    if (user.role === 'ADMIN' || user.role==='MODERATOR') {
+      return true;
+    } else if (user.id === id) {
+      return true;
+    } else {
+      return false;
+    }
   };
 
   return (
@@ -178,27 +188,28 @@ const AllTopics = (props) => {
                   {columns.map((column) => {
                     const value = row[column.id];
 
-                    if (column.id === 'edit') {                      
-                      if (row.user.id === user?.id) {
-                        return (
-                          <TableCell
-                            key={row.id}
-                            align={column.align}
-                            style={{ marginRight: 15 }}
+                    if (column.id === 'edit') {
+                      return (
+                        <TableCell
+                          key={row.id}
+                          align={column.align}
+                          style={{ marginRight: 15 }}
+                        >
+                          <Tooltip
+                            title='comments'
+                            content='comments'
+                            style={{ zIndex: 10000 }}
                           >
-                            <Tooltip
-                              title='comments'
-                              content='comments'
-                              style={{ zIndex: 10000 }}
+                            <IconButton
+                              aria-label='expand row'
+                              size='small'
+                              onClick={() => onCellClick('show', row)}
                             >
-                              <IconButton
-                                aria-label='expand row'
-                                size='small'
-                                onClick={() => onCellClick('show', row)}
-                              >
-                                <ReplyAll />
-                              </IconButton>
-                            </Tooltip>
+                              <ReplyAll />
+                            </IconButton>
+                          </Tooltip>
+
+                          {canEditThis(row.user.id) === true && (
                             <Tooltip
                               title='edit'
                               content='edit'
@@ -207,37 +218,29 @@ const AllTopics = (props) => {
                               <IconButton
                                 aria-label='expand row'
                                 size='small'
-                                disabled={row.user.id !== user?.id}
                                 onClick={() => onCellClick('edit', row)}
                               >
                                 <EditIcon />
                               </IconButton>
                             </Tooltip>
-                          </TableCell>
-                        );
-                      } else {
-                        return (
-                          <TableCell
-                            key={row.id}
-                            align={column.align}
-                            style={{ marginRight: 15 }}
-                          >
+                          )}
+                          {canEditThis(row.user.id) === true && (
                             <Tooltip
-                              title='comments'
-                              content='comments'
+                              title='delete'
+                              content='delete'
                               style={{ zIndex: 10000 }}
                             >
                               <IconButton
                                 aria-label='expand row'
-                                size='small'
-                                onClick={() => onCellClick('show', row)}
+                                size='small' 
+                                onClick={() => onCellClick('edit', row)}
                               >
-                                <ReplyAll />
+                                <DeleteIcon />
                               </IconButton>
                             </Tooltip>
-                          </TableCell>
-                        );
-                      }
+                          )}
+                        </TableCell>
+                      );
                     } else {
                       return (
                         <TableCell key={column.id} align={column.align}>

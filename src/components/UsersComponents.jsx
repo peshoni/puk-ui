@@ -14,8 +14,8 @@ import { default as React, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import Tooltip from 'react-simple-tooltip';
 import API from '../services/api';
+import UserService from '../services/user-service';
 import UserFormDialog from './UserFormDialog';
-
 //const addActionRef = React.useRef();
 
 const columns = [
@@ -79,6 +79,7 @@ const useStyles = makeStyles({
 });
 
 const AllUsers = (props) => {
+  const [user, setUser] = useState(UserService.getUSer());
   const history = useHistory();
   Moment.locale('bg');
   const classes = useStyles();
@@ -106,12 +107,12 @@ const AllUsers = (props) => {
       .then((res) => {
         setAllItems(res.data.count);
         res.data.result.forEach((element) => {
-          element.createdAt = Moment(element.createdAt)
-            .format('DD.MM.YYYY - HH:mm:ss')
-            .toString();
-          element.modifiedAt = Moment(element.modifiedAt)
-            .format('DD.MM.YYYY - HH:mm:ss')
-            .toString();
+          // element.createdAt = Moment(element.createdAt)
+          //   .format('DD.MM.YYYY - HH:mm:ss') 
+          //   .toString();
+          // element.modifiedAt = Moment(element.modifiedAt)
+          //   .format('DD.MM.YYYY - HH:mm:ss')
+          //   .toString();
         });
         setUsers(res.data.result);
       })
@@ -127,8 +128,11 @@ const AllUsers = (props) => {
   const closeDialog = (props) => {
     if (props.result === 'ok') {
       let us = props.user;
-      delete us.createdAt;
+      us.createdAt = new Date(us.createdAt);
       delete us.updatedAt;
+      if (us.role === null) {
+        us.role = "USER";
+      }
       us.modifiedAt = new Date();
 
       API.post('/users/up/', us)
@@ -144,10 +148,14 @@ const AllUsers = (props) => {
   };
 
   const onCellClick = (action, params) => {
-    let data = { isOpen: true, user: params };
-
+    let data = { isOpen: true, user: params }; 
     openDialog(data);
   };
+
+  // const onAddUser = () => {
+  //   console.log('ADD USER');let data = { isOpen: true, user: {} ,update:false}; 
+  //   openDialog(data );
+  // }
 
   return (
     <Paper className={classes.root}>
@@ -155,12 +163,14 @@ const AllUsers = (props) => {
         <Table stickyHeader aria-label='sticky table'>
           <TableHead>
             <TableRow>
-              <TableCell align='center' colSpan={57}>
+              <TableCell align='center' colSpan={8}>
                 Users
-              </TableCell>
-              {/* <TableCell align="right"> <Fab size="small" color="secondary" aria-label="add" to='/addUser' component={Link} >
-                                <AddIcon />
-                            </Fab></TableCell> */}
+              </TableCell> 
+              {/* <TableCell align='right'>
+                <Fab size='small' color='secondary' aria-label='add'>
+                  <AddIcon onClick={() => onAddUser()} />
+                </Fab>
+              </TableCell> */}
             </TableRow>
             <TableRow>
               {columns.map((column) => (
@@ -187,19 +197,23 @@ const AllUsers = (props) => {
                           align={column.align}
                           style={{ marginRight: 15 }}
                         >
-                          <Tooltip
-                            title='edit'
-                            content='edit'
-                            style={{ zIndex: 10000 }}
-                          >
-                            <IconButton
-                              aria-label='expand row'
-                              size='small'
-                              onClick={() => onCellClick('edit', row)}
+
+                          {user.role === 'ADMIN' && (
+                            <Tooltip
+                              title='edit'
+                              content='edit'
+                              style={{ zIndex: 10000 }}
                             >
-                              <EditIcon />
-                            </IconButton>
-                          </Tooltip>
+                              <IconButton
+                                aria-label='expand row'
+                                size='small'
+                                onClick={() => onCellClick('edit', row)}
+                              >
+                                <EditIcon />
+                              </IconButton>
+                            </Tooltip>
+                          )}
+
                         </TableCell>
                       );
                     } else {

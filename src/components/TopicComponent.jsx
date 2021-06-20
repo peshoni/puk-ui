@@ -51,8 +51,8 @@ const useStyles = makeStyles({
   },
 });
 
-const Topic = (props) => { 
-  const [user, doNothing] = useState(UserService.getUSer());
+const Topic = (props) => {
+  const [user] = useState(UserService.getUSer());
   const [topic, setTopic] = useState();
   const [repliesPage, setRepliesPage] = useState([]);
 
@@ -69,7 +69,7 @@ const Topic = (props) => {
   const history = useHistory();
 
   useEffect(() => {
-    console.log('Ieeeeee')
+    console.log('Ieeeeee');
     console.log(user);
     loadTopic(topicId, page, rowsPerPage);
   }, []);
@@ -80,7 +80,9 @@ const Topic = (props) => {
         console.log(response);
         let top = response.data.result;
         console.log(top.repliesPage);
-
+        if (response.data.count === 0) {
+          alert('empty collection'); return;
+        }
         setAllItems(response.data.count);
 
         top.repliesPage.forEach((element) => {
@@ -94,18 +96,26 @@ const Topic = (props) => {
             .format('DD.MM.YYYY - HH:mm:ss')
             .toString();
         });
-        //   topic = res.data.result;
-        setTopic(top);
-
+       
+        setTopic(top); 
         setRepliesPage(top.repliesPage);
         setLoading(false);
+
+        API.get('/topics/saw/'+ user.id+'/'+top.id+'/')
+        .then((response) => {
+         console.log(response)
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
       })
       .catch((err) => {
         console.log(err);
       });
   };
- 
-  const handleChangePage = (event, newPage) => { 
+
+  const handleChangePage = (event, newPage) => {
     // setTimeout(
     //     () =>  setPage(newPage),
     //     1500
@@ -114,12 +124,7 @@ const Topic = (props) => {
     console.log(newPage, page);
     loadTopic(topicId, newPage, rowsPerPage);
   };
-
-//   const handleChangeRowsPerPage = (event) => {
-//     setRowsPerPage(+event.target.value);
-//     setPage(0);
-//     loadTopic(topicId, page, rowsPerPage);
-//   };
+ 
 
   const onCellClick = (action, params) => {
     console.log(action);
@@ -139,10 +144,17 @@ const Topic = (props) => {
         break;
     }
   };
-  const canEditThis = (a) => {
-    // console.log('current user: ' + userId);
-    // console.log('reply by user: ' + a);
+
+  const canEditThis = (id) => {
+    if (user.role === 'ADMIN' || user.role==='MODERATOR') {
+      return true;
+    } else if (user.id === id) {
+      return true;
+    } else {
+      return false;
+    }
   };
+  
 
   // DIALOG
   const [dialogIsOpen, setDialogIsOpen] = React.useState({
@@ -228,34 +240,37 @@ const Topic = (props) => {
                           align={column.align}
                           style={{ marginRight: 15 }}
                         >
-                          <Tooltip
-                            title='edit'
-                            content='edit'
-                            style={{ zIndex: 10000 }}
-                          >
-                            <IconButton
-                              disabled={canEditThis(row.user.id)}
-                              aria-label='expand row'
-                              size='small'
-                              onClick={() => onCellClick('edit', row)}
+                          {canEditThis(row.user.id) === true && (
+                            <Tooltip
+                              title='edit'
+                              content='edit'
+                              style={{ zIndex: 10000 }}
                             >
-                              <EditIcon />
-                            </IconButton>
-                          </Tooltip>
-                          <Tooltip
-                            title='delete'
-                            content='delete'
-                            style={{ zIndex: 10000 }}
-                          >
-                            <IconButton
-                              disabled={user.id === row.user.id}
-                              aria-label='expand row'
-                              size='small'
-                              onClick={() => onCellClick('delete', row)}
+                              <IconButton
+                                aria-label='expand row'
+                                size='small'
+                                onClick={() => onCellClick('edit', row)}
+                              >
+                                <EditIcon />
+                              </IconButton>
+                            </Tooltip>
+                          )}
+
+                          {canEditThis(row.user.id) === true && (
+                            <Tooltip
+                              title='delete'
+                              content='delete'
+                              style={{ zIndex: 10000 }}
                             >
-                              <DeleteIcon />
-                            </IconButton>
-                          </Tooltip>
+                              <IconButton
+                                aria-label='expand row'
+                                size='small'
+                                onClick={() => onCellClick('delete', row)}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </Tooltip>
+                          )}
                         </TableCell>
                       );
                     } else {
@@ -291,5 +306,5 @@ const Topic = (props) => {
     </Paper>
   );
 };
- 
+
 export default Topic;

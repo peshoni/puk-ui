@@ -21,8 +21,7 @@ inst.interceptors.request.use(request => {
 inst.interceptors.response.use(function (response) {
     return response;
 }, function (error) {
-    if (401 === error.response.status) {
- 
+    if (401 === error.response.status) { 
         localStorage.clear();
         window.location.href = '/';
     } else {

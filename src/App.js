@@ -5,16 +5,15 @@ import { AllTopics, Header, Home, SignIn, SignUp, Topic } from './components';
 import AllUsers from './components/UsersComponents';
 import UserService from './services/user-service';
 function App() {
-  const [user, doNothing] = useState(UserService.getUSer());
+  const [user ] = useState(UserService.getUSer());
   return (
     <BrowserRouter>
       <div className='App'>
-        <Header />
+        <Header user={user }/>
         {user !== null ? (
           <Switch>
             <Route path='/' exact component={SignIn} />
-            <Route path='/signUp' exact component={SignUp} />
-
+            <Route path='/signUp' exact component={SignUp} /> 
             <Route path='/home' exact component={Home} />
             <Route path='/users' exact component={AllUsers} />
             <Route path='/topics' exact component={AllTopics} />
@@ -23,7 +22,8 @@ function App() {
         ) : (
           <Switch>
             <Route path='/' exact component={SignIn} />
-            <Route path='/signUp' exact component={SignUp} />
+              <Route path='/signUp' exact component={SignUp} />
+              <Route path='/home' exact component={Home} />
           </Switch>
         )}
       </div>

@@ -5,14 +5,15 @@ import API from '../services/api';
 import UserService from '../services/user-service';
 
 const Home = (props) => { 
-  console.log(props);
+ 
   let username = localStorage.getItem('username');
   localStorage.removeItem('username');
   console.log(username);
   if (username) {
     API.post(`/users/${username}/`)
-    .then(function (res) { 
-     UserService.setUser(res.data);  
+      .then(function (res) {
+        console.log(res);
+        UserService.setUser(res.data);  
     })
     .catch(function (er) {
       console.log(er);

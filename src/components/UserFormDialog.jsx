@@ -3,23 +3,39 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
 import TextField from '@material-ui/core/TextField';
 import { React, useEffect, useState } from 'react';
 
 export default function UserFormDialog(props) { 
   const { open, onClose } = props; 
   const [user, setUser] = useState({});
+  const [moderator, setModerator] =  useState({  
+    check:false,
+  });
 
   useEffect(() => { 
     setUser(props.user); 
+    setModerator({check:props.user.role === 'MODERATOR'})
   }, [props]); 
   
   const textChanged = (e, v) => { 
     let u = Object.assign({}, user);
-    u[e] = v; 
+   
+    u[e] = v;
+    console.log(u);
     setUser( u);
   };
+  const handleChange = (event) => {
+    console.log(user)
+    let u = Object.assign({}, user);
+    u.role = event.target.checked ? 'MODERATOR' : 'USER';
+    setUser(u);
+    console.log(user);
 
+    setModerator({ ...moderator, [event.target.name]: event.target.checked });
+  };
   return (
     <Dialog
       open={open}
@@ -82,8 +98,19 @@ export default function UserFormDialog(props) {
             textChanged("password", e.target.value);
           }}
         />
-        
-        
+        {user.role !== 'ADMIN' && (
+         <FormControlLabel
+        control={
+          <Switch
+            checked={moderator.check}
+            onChange={handleChange}
+            name="check"
+            color="primary"
+          />
+        }
+        label="moderator"
+      />
+      )}
       </DialogContent>
       <DialogActions>
         <Button

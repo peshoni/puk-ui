@@ -77,7 +77,8 @@ const SignIn = (props) => {
         localStorage.setItem('access_token', response.data.access_token);
         localStorage.setItem('refresh_token', response.data.refresh_token);
         localStorage.setItem('username', username);
-        history.push('/home');
+        console.log('Go home')
+        history.push('/home'); 
       })
       .catch(function (error) {
         console.log(error);
