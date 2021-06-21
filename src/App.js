@@ -1,7 +1,8 @@
 import { default as React, useState } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import './App.css';
-import { AllTopics, Header, Home, SignIn, SignUp, Topic } from './components';
+import { Header, Home, SignIn, SignUp, Topic } from './components';
+import Topics from './components/TopicsComponent';
 import AllUsers from './components/UsersComponents';
 import UserService from './services/user-service';
 function App() {
@@ -16,7 +17,7 @@ function App() {
             <Route path='/signUp' exact component={SignUp} /> 
             <Route path='/home' exact component={Home} />
             <Route path='/users' exact component={AllUsers} />
-            <Route path='/topics' exact component={AllTopics} />
+            <Route path='/topics' exact component={Topics} />
             <Route path='/topic/:topicId' exact component={Topic} />
           </Switch>
         ) : (

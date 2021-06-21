@@ -11,7 +11,6 @@ import TableRow from '@material-ui/core/TableRow';
 import EditIcon from '@material-ui/icons/Edit';
 import Moment from 'moment';
 import { default as React, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import Tooltip from 'react-simple-tooltip';
 import API from '../services/api';
 import UserService from '../services/user-service';
@@ -79,8 +78,7 @@ const useStyles = makeStyles({
 });
 
 const AllUsers = (props) => {
-  const [user, setUser] = useState(UserService.getUSer());
-  const history = useHistory();
+  const [user ] = useState(UserService.getUSer()); 
   Moment.locale('bg');
   const classes = useStyles();
 
@@ -108,7 +106,7 @@ const AllUsers = (props) => {
         setAllItems(res.data.count);
         res.data.result.forEach((element) => {
           // element.createdAt = Moment(element.createdAt)
-          //   .format('DD.MM.YYYY - HH:mm:ss') 
+          //   .format('DD.MM.YYYY - HH:mm:ss')
           //   .toString();
           // element.modifiedAt = Moment(element.modifiedAt)
           //   .format('DD.MM.YYYY - HH:mm:ss')
@@ -131,7 +129,7 @@ const AllUsers = (props) => {
       us.createdAt = new Date(us.createdAt);
       delete us.updatedAt;
       if (us.role === null) {
-        us.role = "USER";
+        us.role = 'USER';
       }
       us.modifiedAt = new Date();
 
@@ -148,14 +146,9 @@ const AllUsers = (props) => {
   };
 
   const onCellClick = (action, params) => {
-    let data = { isOpen: true, user: params }; 
+    let data = { isOpen: true, user: params };
     openDialog(data);
   };
-
-  // const onAddUser = () => {
-  //   console.log('ADD USER');let data = { isOpen: true, user: {} ,update:false}; 
-  //   openDialog(data );
-  // }
 
   return (
     <Paper className={classes.root}>
@@ -165,7 +158,7 @@ const AllUsers = (props) => {
             <TableRow>
               <TableCell align='center' colSpan={8}>
                 Users
-              </TableCell> 
+              </TableCell>
               {/* <TableCell align='right'>
                 <Fab size='small' color='secondary' aria-label='add'>
                   <AddIcon onClick={() => onAddUser()} />
@@ -197,7 +190,6 @@ const AllUsers = (props) => {
                           align={column.align}
                           style={{ marginRight: 15 }}
                         >
-
                           {user.role === 'ADMIN' && (
                             <Tooltip
                               title='edit'
@@ -213,7 +205,6 @@ const AllUsers = (props) => {
                               </IconButton>
                             </Tooltip>
                           )}
-
                         </TableCell>
                       );
                     } else {

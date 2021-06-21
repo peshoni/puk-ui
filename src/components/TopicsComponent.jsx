@@ -21,7 +21,6 @@ import API from '../services/api';
 import UserService from '../services/user-service';
 import DataDialog from './DataDialog';
 
-//const addActionRef = React.useRef();
 const columns = [
   { id: 'id', label: 'id', minWidth: 70 },
   { id: 'title', label: 'Title', width: 130 },
@@ -39,6 +38,11 @@ const columns = [
     width: 160,
   },
   {
+    id: 'seenCounter',
+    label: 'seen by',
+    width: 200,
+  },
+  {
     id: 'edit',
     label: 'edit',
   },
@@ -53,17 +57,15 @@ const useStyles = makeStyles({
   },
 });
 
-const AllTopics = (props) => {
+const Topics = (props) => {
   const history = useHistory();
   Moment.locale('bg');
   const classes = useStyles();
-
   const [topics, setTopics] = useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [allItems, setAllItems] = React.useState(0);
-  const [user, setUser] = useState(UserService.getUSer());
-  //const [editorId, setEditorId] = React.useState(0);
+  const [user] = useState(UserService.getUSer());
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -80,10 +82,10 @@ const AllTopics = (props) => {
         history.push(`/topic/${params.id}`);
         return;
       case 'edit':
-        console.log(' EDIT ');
+        alert('Edit - Not implemented yet');
         break;
       case 'delete':
-        console.log(' DELETE ');
+        alert('Delete - Not implemented yet');
         break;
       default:
         break;
@@ -109,6 +111,7 @@ const AllTopics = (props) => {
             .format('DD.MM.YYYY - HH:mm:ss')
             .toString();
         });
+        console.log(res.data.result);
         setTopics(res.data.result);
       })
       .catch((err) => console.log(err));
@@ -145,7 +148,7 @@ const AllTopics = (props) => {
   };
 
   const canEditThis = (id) => {
-    if (user.role === 'ADMIN' || user.role==='MODERATOR') {
+    if (user.role === 'ADMIN' || user.role === 'MODERATOR') {
       return true;
     } else if (user.id === id) {
       return true;
@@ -160,7 +163,7 @@ const AllTopics = (props) => {
         <Table stickyHeader aria-label='sticky table'>
           <TableHead>
             <TableRow>
-              <TableCell align='center' colSpan={5}>
+              <TableCell align='center' colSpan={6}>
                 <h2> topics </h2>
               </TableCell>
               <TableCell align='right'>
@@ -232,8 +235,8 @@ const AllTopics = (props) => {
                             >
                               <IconButton
                                 aria-label='expand row'
-                                size='small' 
-                                onClick={() => onCellClick('edit', row)}
+                                size='small'
+                                onClick={() => onCellClick('delete', row)}
                               >
                                 <DeleteIcon />
                               </IconButton>
@@ -274,5 +277,4 @@ const AllTopics = (props) => {
     </Paper>
   );
 };
-
-export default AllTopics;
+export default Topics;

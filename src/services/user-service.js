@@ -1,13 +1,12 @@
- 
 import CryptoJS from 'crypto-js';
-const UserService = { 
+const UserService = {
   setUser: function (arg) {
     let stringify = JSON.stringify(arg);
     let encrypted = CryptoJS.AES.encrypt(
       stringify,
       'yellowGreenBeard'
     ).toString();
-    localStorage.setItem('user', encrypted); 
+    localStorage.setItem('user', encrypted);
   },
   getUSer: function () {
     try {
@@ -20,7 +19,7 @@ const UserService = {
       return us;
     } catch (error) {
       return null;
-    } 
+    }
   },
 };
 export default UserService;

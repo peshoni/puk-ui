@@ -8,32 +8,27 @@ import Switch from '@material-ui/core/Switch';
 import TextField from '@material-ui/core/TextField';
 import { React, useEffect, useState } from 'react';
 
-export default function UserFormDialog(props) { 
-  const { open, onClose } = props; 
+export default function UserFormDialog(props) {
+  const { open, onClose } = props;
   const [user, setUser] = useState({});
-  const [moderator, setModerator] =  useState({  
-    check:false,
+  const [moderator, setModerator] = useState({
+    check: false,
   });
 
-  useEffect(() => { 
-    setUser(props.user); 
-    setModerator({check:props.user.role === 'MODERATOR'})
-  }, [props]); 
-  
-  const textChanged = (e, v) => { 
+  useEffect(() => {
+    setUser(props.user);
+    setModerator({ check: props.user.role === 'MODERATOR' });
+  }, [props]);
+
+  const textChanged = (e, v) => {
     let u = Object.assign({}, user);
-   
     u[e] = v;
-    console.log(u);
-    setUser( u);
+    setUser(u);
   };
   const handleChange = (event) => {
-    console.log(user)
     let u = Object.assign({}, user);
     u.role = event.target.checked ? 'MODERATOR' : 'USER';
     setUser(u);
-    console.log(user);
-
     setModerator({ ...moderator, [event.target.name]: event.target.checked });
   };
   return (
@@ -55,7 +50,7 @@ export default function UserFormDialog(props) {
           fullWidth
           value={user.firstName}
           onChange={(e) => {
-            textChanged("firstName", e.target.value);
+            textChanged('firstName', e.target.value);
           }}
         />
         <TextField
@@ -68,10 +63,10 @@ export default function UserFormDialog(props) {
           fullWidth
           value={user.lastName}
           onChange={(e) => {
-            textChanged("lastName", e.target.value);
+            textChanged('lastName', e.target.value);
           }}
         />
-         <TextField
+        <TextField
           variant='outlined'
           margin='normal'
           id='username'
@@ -81,11 +76,10 @@ export default function UserFormDialog(props) {
           fullWidth
           value={user.username}
           onChange={(e) => {
-            textChanged("username", e.target.value);
+            textChanged('username', e.target.value);
           }}
-          
         />
-         <TextField
+        <TextField
           variant='outlined'
           margin='normal'
           id='password'
@@ -95,22 +89,22 @@ export default function UserFormDialog(props) {
           fullWidth
           value={user.password}
           onChange={(e) => {
-            textChanged("password", e.target.value);
+            textChanged('password', e.target.value);
           }}
         />
         {user.role !== 'ADMIN' && (
-         <FormControlLabel
-        control={
-          <Switch
-            checked={moderator.check}
-            onChange={handleChange}
-            name="check"
-            color="primary"
+          <FormControlLabel
+            control={
+              <Switch
+                checked={moderator.check}
+                onChange={handleChange}
+                name='check'
+                color='primary'
+              />
+            }
+            label='moderator'
           />
-        }
-        label="moderator"
-      />
-      )}
+        )}
       </DialogContent>
       <DialogActions>
         <Button

@@ -4,14 +4,10 @@ import { ToastProvider } from 'react-toast-notifications';
 import App from './App';
 import './index.css';
 
-ReactDOM.render(
-   
-  <ToastProvider>
-    {/* <React.StrictMode> */} 
-    <App  /> 
-    {/* </React.StrictMode> */}
-  </ToastProvider>
-   
+ReactDOM.render( 
+  <ToastProvider> 
+    <App  />  
+  </ToastProvider> 
   ,
   document.getElementById('root')
 );

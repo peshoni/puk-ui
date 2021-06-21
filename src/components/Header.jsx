@@ -29,10 +29,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Header = (props) => { 
+const Header = (props) => {
   const classes = useStyles();
-  const [user,setUser] = useState(UserService.getUSer() );
-  console.log(user);
+  const [user, setUser] = useState(UserService.getUSer());
   const [anchorEl, setAnchorEl] = React.useState(null);
   const history = useHistory();
   const handleClick = (event) => {
@@ -77,7 +76,7 @@ const Header = (props) => {
   const handleLogout = () => {
     localStorage.clear();
     setUser(null);
-    history.push('/'); 
+    history.push('/');
   };
 
   return (
@@ -107,7 +106,7 @@ const Header = (props) => {
             </ListItemIcon>
             <ListItemText primary='Users' />
           </StyledMenuItem>
-          
+
           <StyledMenuItem to='/topics' component={Link} onClick={handleClose}>
             <ListItemIcon>
               <List fontSize='small' />
@@ -130,11 +129,15 @@ const Header = (props) => {
             Sign in
           </Button>
         )}
-          {user !== null && (<div>
-          <Button color='inherit' onClick={handleLogout} >
-            Logout  
-          </Button>
-          <div> {user.firstName} {user.lastName} ({user.role})</div>
+        {user !== null && (
+          <div>
+            <Button color='inherit' onClick={handleLogout}>
+              Logout
+            </Button>
+            <div>
+              {' '}
+              {user.firstName} {user.lastName} ({user.role})
+            </div>
           </div>
         )}
       </Toolbar>

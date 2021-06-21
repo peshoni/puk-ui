@@ -55,33 +55,24 @@ const Topic = (props) => {
   const [user] = useState(UserService.getUSer());
   const [topic, setTopic] = useState();
   const [repliesPage, setRepliesPage] = useState([]);
-
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage] = useState(10);
   const [allItems, setAllItems] = useState(0);
-
-  const [loading, setLoading] = useState(true);
-
-  //const topicId = +props.match.params.topicId;
-  const [topicId, setTopicId] = useState(+props.match.params.topicId);
-
+  const [topicId] = useState(+props.match.params.topicId);
   const classes = useStyles();
   const history = useHistory();
 
   useEffect(() => {
-    console.log('Ieeeeee');
-    console.log(user);
     loadTopic(topicId, page, rowsPerPage);
   }, []);
 
   const loadTopic = (id, page, limit) => {
     API.get(`/reply/topicId/${topicId}/${page}/${rowsPerPage}/`)
       .then((response) => {
-        console.log(response);
         let top = response.data.result;
-        console.log(top.repliesPage);
         if (response.data.count === 0) {
-          alert('empty collection'); return;
+          alert('empty collection');
+          return;
         }
         setAllItems(response.data.count);
 
@@ -96,19 +87,15 @@ const Topic = (props) => {
             .format('DD.MM.YYYY - HH:mm:ss')
             .toString();
         });
-       
-        setTopic(top); 
+
+        setTopic(top);
         setRepliesPage(top.repliesPage);
-        setLoading(false);
 
-        API.get('/topics/saw/'+ user.id+'/'+top.id+'/')
-        .then((response) => {
-         console.log(response)
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-
+        API.get('/topics/saw/' + user.id + '/' + top.id + '/')
+          .then((response) => {})
+          .catch((error) => {
+            console.log(error);
+          });
       })
       .catch((err) => {
         console.log(err);
@@ -116,37 +103,28 @@ const Topic = (props) => {
   };
 
   const handleChangePage = (event, newPage) => {
-    // setTimeout(
-    //     () =>  setPage(newPage),
-    //     1500
-    // );
     setPage(newPage);
-    console.log(newPage, page);
     loadTopic(topicId, newPage, rowsPerPage);
   };
- 
 
   const onCellClick = (action, params) => {
-    console.log(action);
-    console.log(params);
     switch (action) {
       case 'show':
         history.push(`/topic/${params.id}`);
         return;
       case 'edit':
-        console.log(' EDIT ');
+        alert('Edit - Not implemented yet');
         break;
       case 'delete':
-        console.log(' DELETE ');
+        alert('Delete - Not implemented yet');
         break;
-
       default:
         break;
     }
   };
 
   const canEditThis = (id) => {
-    if (user.role === 'ADMIN' || user.role==='MODERATOR') {
+    if (user.role === 'ADMIN' || user.role === 'MODERATOR') {
       return true;
     } else if (user.id === id) {
       return true;
@@ -154,7 +132,6 @@ const Topic = (props) => {
       return false;
     }
   };
-  
 
   // DIALOG
   const [dialogIsOpen, setDialogIsOpen] = React.useState({
@@ -168,15 +145,12 @@ const Topic = (props) => {
   const openDialog = (params) => setDialogIsOpen(params);
 
   const closeDialog = (props) => {
-    console.log(props);
     if (props?.length > 0) {
       const payload = {
-        userId: 1, // ????? who is this
-        topicId: topicId, /// topic
+        userId: user.id,
+        topicId: topicId,
         text: props,
       };
-
-      console.log(payload);
 
       API.post('/reply', payload)
         .then((response) => {
@@ -206,8 +180,6 @@ const Topic = (props) => {
                   size='small'
                   color='secondary'
                   aria-label='add'
-                  //   to='/addreply'
-                  //   component={Link}
                   onClick={() => addReply()}
                 >
                   <AddIcon />

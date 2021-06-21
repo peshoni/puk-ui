@@ -77,8 +77,7 @@ const SignIn = (props) => {
         localStorage.setItem('access_token', response.data.access_token);
         localStorage.setItem('refresh_token', response.data.refresh_token);
         localStorage.setItem('username', username);
-        console.log('Go home')
-        history.push('/home'); 
+        history.push('/home');
       })
       .catch(function (error) {
         console.log(error);
@@ -133,11 +132,7 @@ const SignIn = (props) => {
             Sign In
           </Button>
           <Grid container>
-            <Grid item xs>
-              {/* <Link href="#" variant="body2">
-                                Forgot password?
-              </Link> */}
-            </Grid>
+            <Grid item xs></Grid>
             <Grid item>
               <Link href='/signUp' variant='body2'>
                 {"Don't have an account? Sign Up"}
