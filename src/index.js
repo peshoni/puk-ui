@@ -6,7 +6,7 @@ import './index.css';
 
 ReactDOM.render( 
   <ToastProvider> 
-    <App  />  
+    <App  />
   </ToastProvider> 
   ,
   document.getElementById('root')

@@ -14,9 +14,8 @@ import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Group from '@material-ui/icons/Group';
 import List from '@material-ui/icons/List';
 import MenuIcon from '@material-ui/icons/Menu';
-import React, { useState } from 'react';
+import { React, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import UserService from '../services/user-service';
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -29,10 +28,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Header = (props) => {
-  const classes = useStyles();
-  const [user, setUser] = useState(UserService.getUSer());
-  const [anchorEl, setAnchorEl] = React.useState(null);
+const Header = (props) => {   
+  const user = props.user;
+  const classes = useStyles(); 
+  const [anchorEl, setAnchorEl] =  useState(null);
   const history = useHistory();
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -74,8 +73,8 @@ const Header = (props) => {
   }))(MenuItem);
 
   const handleLogout = () => {
-    localStorage.clear();
-    setUser(null);
+    localStorage.clear(); 
+    props.log(null)
     history.push('/');
   };
 

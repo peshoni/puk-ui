@@ -4,18 +4,24 @@ import './App.css';
 import { Header, Home, SignIn, SignUp, Topic } from './components';
 import Topics from './components/TopicsComponent';
 import AllUsers from './components/UsersComponents';
-import UserService from './services/user-service';
 function App() {
-  const [user ] = useState(UserService.getUSer());
+  const [user, setUSer] = useState(null);
+  const setLoggedUser = (u) => {
+    setUSer(u);
+  };
   return (
     <BrowserRouter>
       <div className='App'>
-        <Header user={user }/>
+        <Header user={user} log={setLoggedUser} />
         {user !== null ? (
           <Switch>
             <Route path='/' exact component={SignIn} />
-            <Route path='/signUp' exact component={SignUp} /> 
-            <Route path='/home' exact component={Home} />
+            <Route path='/signUp' exact component={SignUp} />
+            <Route
+              path='/home'
+              exact
+              render={(props) => <Home {...props} fun={setLoggedUser} />}
+            />
             <Route path='/users' exact component={AllUsers} />
             <Route path='/topics' exact component={Topics} />
             <Route path='/topic/:topicId' exact component={Topic} />
@@ -23,8 +29,12 @@ function App() {
         ) : (
           <Switch>
             <Route path='/' exact component={SignIn} />
-              <Route path='/signUp' exact component={SignUp} />
-              <Route path='/home' exact component={Home} />
+            <Route path='/signUp' exact component={SignUp} />
+            <Route
+              path='/home'
+              exact
+              render={(props) => <Home {...props} fun={setLoggedUser} />}
+            />
           </Switch>
         )}
       </div>
